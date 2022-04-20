@@ -1,0 +1,37 @@
+{
+
+    "BSC": {
+        "bridge": "",
+        "chainId": 97,
+        "coin": "BNB",
+        "decimals": 18,
+        "confirmations": 12,
+        "blocktime": 3000,
+        "rpc": "https://ethereum-rpc.icicbchain.org/bsctest/",
+        "explorer": "https://testnet.bscscan.com/",
+        "erc20": "BEP20"
+    },
+    "POL": {
+        "bridge": "",
+        "chainId": 80001,
+        "coin": "MATIC",
+        "decimals": 18,
+        "confirmations": 14,
+        "blocktime": 3000,
+        "rpc": "https://rpc-mumbai.maticvigil.com/",
+        "explorer": "https://mumbai.polygonscan.com/",
+        "erc20": "ERC20"
+    },
+    "CRO": {
+        "bridge": "",
+        "chainId": 338,
+        "coin": "CRO",
+        "decimals": 8,
+        "confirmations": 14,
+        "blocktime": 6000,
+        "rpc": "https://evm-t3.cronos.org/",
+        "explorer": "https://cronos.org/explorer/testnet3",
+        "erc20": "ERC20"
+    }
+}
+
