@@ -45,15 +45,15 @@ const initialState: BridgeTypes = {
 	value: '0001',
 	flashcoins: {
 		BSC: {
-			decimal: 18,
+			decimals: 18,
 			address: process.env.REACT_APP_ADDRESS_BSC
 		},
 		CRO: {
-			decimal: 18,
+			decimals: 18,
 			address: process.env.REACT_APP_ADDRESS_CRO
 		},
 		POL: {
-			decimal: 18,
+			decimals: 18,
 			address: process.env.REACT_APP_ADDRESS_POL
 		},
 	},
