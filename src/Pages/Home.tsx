@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import Networks from '../config/networks.json'
 import useWallet, { request, CONNECTED, CONNECTING, ZERO, toEther, fromEther } from '../useWallet';
@@ -12,50 +12,56 @@ interface HomeStatus {
 	loading: boolean
 }
 
-
 const Home = () => {
 	const G = useWallet();
 	const L = G.L;
 	const refMenu = React.useRef<HTMLUListElement>(null)
 	const refList = React.useRef<HTMLInputElement>(null)
 	const refAmount = React.useRef<HTMLInputElement>(null)
-
+	const [flashPrice, setFlashprice] = React.useState(Number);
+	const [countFlashPrice, setCountFlashPrice] = React.useState<Number>(flashPrice);
 	const [status, setStatus] = React.useState<HomeStatus>({
 		query: '',
 		submitLabel: '',
 		loading: false,
 	})
 	const [isPending, setPending] = React.useState(false);
-	const [chainArray, setChianArray] = React.useState(['BSC', 'POL', 'CRO'])//order Networks.json
-	const [netArray, setNetArray] = React.useState(['Binance', 'Polygon', 'Cronos'])//order Networks.json
 	const [issure, setIsSure] = React.useState(false);
+	const [noTargetChain, setNotargetChain] = React.useState(false);
+	const [tokenSelectModal, setTokenSelectModal] = React.useState(false);
+	const [isActive, setIsActive] = React.useState('');
 
 	const updateStatus = (json) => setStatus({ ...status, ...json })
 
-
-
 	React.useEffect(() => {
 		try {
+			FLASHprice();
 			if (!G.inited && !G.loading) {
 				G.update({ loading: true })
-				request('/get-all-tokens').then(response => {
-					if (response && response.result) {
-						const res = response.result
-						console.log(res)
-						const coins = {} as CoinTypes
-						for (let chain in res) {
-							for (let i in res[chain]) {
-								const v = res[chain][i]
-								if (coins[v.symbol] === undefined) coins[v.symbol] = {}
-								coins[v.symbol][chain.toUpperCase()] = { address: v.address, decimals: v.decimals }
-							}
-						}
-						checkPending()
-						G.update({ coins, ...G.getPending(), inited: true, loading: false })
-					} else {
-						G.update({ loading: false })
-					}
-				})
+				// request('/get-all-tokens').then(response => {
+				// 	alert('backend call')
+				// 	if (response && response.result) {
+				// 		const res = response.result
+				// 		console.log(res)
+				// 		alert('res')
+				// 		const coins = {} as CoinTypes
+				// 		for (let chain in res) {
+				// 			for (let i in res[chain]) {
+				// 				const v = res[chain][i]
+				// 				if (coins[v.symbol] === undefined)
+				// 					coins[v.symbol] = {}
+
+				// 				coins[v.symbol][chain.toUpperCase()] = { address: v.address, decimals: v.decimals }
+				// 			}
+				// 		}
+				// 		checkPending()
+				// 		G.update({ coins, ...G.getPending(), inited: true, loading: false })
+				// 	} else {
+				// 		alert('res no')
+
+				// 		G.update({ loading: false })
+				// 	}
+				// })
 			}
 		} catch (error) {
 			console.log(error)
@@ -73,12 +79,53 @@ const Home = () => {
 		return () => timer && clearTimeout(timer)
 	}, [isPending])
 
+	// Chain check
+	React.useEffect(() => {
+		if (G.targetChain === G.chain) {
+			G.update({ err: 'Can`t bridge on the same chain' })
+			updateStatus({ loading: false })
+		} else {
+			G.update({ err: '' })
+			updateStatus({ loading: false })
+		}
+
+	}, [G.targetChain, G.chain])
+
+	// Input chain info 
+	React.useEffect(() => {
+		const InputChainInfo = async () => {
+			const token = G.token;
+			const info = G.flashcoins;
+			const result = await request('/input-chain-info', { info, token });
+			console.log('InputChainInfo');
+			console.log(result);
+
+		}
+		InputChainInfo()
+	}, [])
+	const FLASHprice = async () => {
+
+		const result = await fetch('https://api.coinmarketcap.com/data-api/v3/price-prediction/query/half-year?cryptoId=16978',
+			{
+				method: 'GET',
+				// headers: { 'content-type': 'application/json' }, body: params ? JSON.stringify(params) : null
+			});
+		const priceresult = await result.json();
+		// priceresult.data.accuracyPoints[0].ypoint.settlementPrice
+		console.log(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8));
+		setFlashprice(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8));
+		setCountFlashPrice(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8))
+	}
 	const onChangeNetwork = (chain: string) => {
+		ChainActive(chain)
 		const net = networks[chain];
 		const chainId = net.chainId;
 		const rpc = net.rpc;
 		const _chain = 'chain'
 		G.update({ [_chain]: chain })
+		G.update({ 'chainIdMatch': chainId, rpc })
+
+		G.changeNetwork(chainId);
 
 		// const net = networks[G.targetChain]
 		// const chainId = net.chainId
@@ -91,13 +138,14 @@ const Home = () => {
 		}
 	}
 	const onChangeNetwork2 = (chain: string) => {
+		ChainActive(chain);
 		setIsSure(true);
 
 		const net = networks[chain];
 		const chainId = net.chainId;
 		const rpc = net.rpc;
 		const _chain = 'targetChain'
-		G.update({ [_chain]: chain, chainId, rpc })
+		G.update({ [_chain]: chain, chainId })
 
 		if (refMenu && refMenu.current) {
 			refMenu.current.style.display = 'none'
@@ -108,6 +156,7 @@ const Home = () => {
 	const addNetwork = () => {
 		G.addNetwork()
 	}
+
 	const swapChains = () => {
 		const net = networks[G.targetChain]
 		const chainId = net.chainId
@@ -124,10 +173,12 @@ const Home = () => {
 					const v = G.pending[k]
 					const confirmations = G.txs[k]?.confirmations || 0
 					if (networks[v.chain].confirmations > confirmations) {
-						if (params1[v.chain] === undefined) params1[v.chain] = []
+						if (params1[v.chain] === undefined)
+							params1[v.chain] = []
 						params1[v.chain].push(k)
 					} else {
-						if (G.txs[k] && !G.txs[k].err && !G.txs[k].tx) params2.push(k)
+						if (G.txs[k] && !G.txs[k].err && !G.txs[k].tx)
+							params2.push(k)
 					}
 				}
 				if (Object.keys(params1).length) {
@@ -138,7 +189,8 @@ const Home = () => {
 						if (v) {
 							for (let k in v) {
 								if (v[k] === -1) {
-									if (now - G.pending[k].created > 600) txs[k] = { ...txs[k], err: true }
+									if (now - G.pending[k].created > 600)
+										txs[k] = { ...txs[k], err: true }
 								} else {
 									txs[k] = { ...txs[k], confirmations: v[k] }
 								}
@@ -176,72 +228,86 @@ const Home = () => {
 		}
 	}
 	const onChangeValue = (value: string) => {
+		setCountFlashPrice(Number(value) * flashPrice)
 		G.update({ value })
 	}
 	const submit = async () => {
 		try {
-			if (G.status === CONNECTED) {
-				const token = G.coins[G.token][G.chain]
-				const targetToken = G.coins[G.token][G.targetChain]
-				const amount = Number(G.value)
-				const value = fromEther(amount, token.decimals)
-				if (token && amount > 0) {
-					G.update({ err: '' })
-					updateStatus({ loading: true, submitLabel: 'checking balance...' })
-					const rbalance = await G.balance(token.address)
-					const rbalance1 = G.targetChain === 'ICICB' ? value : await G.bridgebalance(G.targetChain, targetToken.address)
-					if (rbalance !== undefined && rbalance1 !== undefined) {
-						const balance = toEther(rbalance, token.decimals)
-						const balance1 = toEther(rbalance1, targetToken.decimals)
-						if (balance >= amount) {
-							if (balance1 >= amount) {
-								let success = true
-								if (token.address !== '-') {//'-' is allowanced token address
-									updateStatus({ loading: true, submitLabel: 'checking allowance...' })
-									const rApproval = await G.approval(token.address)
-									if (rApproval !== undefined) {
-										const approval = toEther(rApproval, token.decimals)
-										console.log('approval', approval, 'decimals', token.decimals)
-										if (approval < amount) {
-											updateStatus({ loading: true, submitLabel: 'allow brige contract ...' })
-											let tx = await G.approve(token.address, value)
-											if (tx !== undefined) {
-												success = await G.waitTransaction(tx)
-											} else {
-												success = false
+			console.log(G.targetChain, G.chain)
+			if (G.targetChain !== G.chain) {
+				if (G.status === CONNECTED) {
+					console.log(G.token)
+					console.log(G.chain);
+					console.log(G.coins);
+
+					const token = G.flashcoins[G.chain];
+					const targetToken = G.flashcoins[G.targetChain];
+
+					const amount = Number(G.value)
+					const value = fromEther(amount, token.decimal)
+
+					if (token && amount > 0) {
+						G.update({ err: '' })
+						updateStatus({ loading: true, submitLabel: 'checking balance...' })
+						const rbalance = await G.balance(token.address)
+						// const rbalance1 = G.targetChain === 'ICICB' ? value : await G.bridgebalance(G.targetChain, targetToken.address)
+						const rbalance1 = await G.bridgebalance(G.targetChain, targetToken.address)
+						if (rbalance !== undefined && rbalance1 !== undefined) {
+							const balance = toEther(rbalance, token.decimal)
+							const balance1 = toEther(rbalance1, targetToken.decimal)
+							if (balance >= amount) {
+								if (balance1 >= amount) {
+									let success = true
+									if (token.address !== '-') {//'-' is Native token address
+										updateStatus({ loading: true, submitLabel: 'checking allowance...' })
+										const rApproval = await G.approval(token.address)
+										if (rApproval !== undefined) {
+											const approval = toEther(rApproval, token.decimal)
+											console.log('approval', approval, 'decimal', token.decimal)
+											if (approval < amount) {
+												updateStatus({ loading: true, submitLabel: 'allow bridge contract ...' })
+												let tx = await G.approve(token.address, value)
+												if (tx !== undefined) {
+													success = await G.waitTransaction(tx)
+												} else {
+													success = false
+												}
 											}
+										} else {
+											success = false
+										}
+									}
+									if (success) {
+										updateStatus({ loading: true, submitLabel: 'exchanging...' })
+										const tx = await G.deposit(token.address === '-' ? ZERO : token.address, value, networks[G.targetChain].chainId)
+										if (tx !== undefined) {
+											updateStatus({ loading: true, submitLabel: 'confirming...' })
+											G.setPending(tx, { chain: G.chain, targetChain: G.targetChain, address: G.address, token: G.token, value: amount, created: Math.round(new Date().getTime() / 1000) })
+											await G.waitTransaction(tx)
+											G.update({ value: '' })
 										}
 									} else {
-										success = false
-									}
-								}
-								if (success) {
-									updateStatus({ loading: true, submitLabel: 'exchanging...' })
-									const tx = await G.deposit(token.address === '-' ? ZERO : token.address, value, networks[G.targetChain].chainId)
-									if (tx !== undefined) {
-										updateStatus({ loading: true, submitLabel: 'confirming...' })
-										G.setPending(tx, { chain: G.chain, targetChain: G.targetChain, address: G.address, token: G.token, value: amount, created: Math.round(new Date().getTime() / 1000) })
-										await G.waitTransaction(tx)
-										G.update({ value: '' })
+										G.update({ err: 'the transaction failed' })
 									}
 								} else {
-									G.update({ err: 'the transaction failed' })
+									G.update({ err: "Sorry, there is not enough balance in the bridge store for swap." })
 								}
 							} else {
-								G.update({ err: "Sorry, there is not enough balance in the bridge store for swap." })
+								G.update({ err: "You haven't enough balance for swap" })
 							}
-						} else {
-							G.update({ err: "You haven't enough balance for swap" })
-						}
 
+						}
+					} else if (refAmount?.current) {
+						refAmount.current.focus()
 					}
-				} else if (refAmount?.current) {
-					refAmount.current.focus()
+					updateStatus({ loading: false })
+				} else {
+					updateStatus({ submitLabel: 'Connecting...' })
+					G.connect()
 				}
-				updateStatus({ loading: false })
 			} else {
-				updateStatus({ submitLabel: 'Connecting...' })
-				G.connect()
+				G.update({ err: 'Can`t bridge on the same chain' })
+				updateStatus({ loading: false })
 			}
 		} catch (err: any) {
 			G.update({ err: err.message })
@@ -262,17 +328,18 @@ const Home = () => {
 						<div className="menu">
 							<i><span className="ic-down"></span></i>
 							<ul ref={refMenu} style={{ width: 150 }}>
-								{Object.keys(networks).map(k =>
+								{/* {Object.keys(networks).map(k =>
 
 									// <li className={!!networks[k].disabled ? 'disabled' : ''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
 									// 	<img className="icon" src={`/networks/${k}.svg`} alt="eth" />
 									// 	<span>{L['chain.' + k.toLowerCase()]}</span>
 									// </li>
+									
 									<li className={''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
 										<img className="icon" src={`/networks/${k}.svg`} alt={k} />
 										<span>{L['chain.' + k.toLowerCase()]}</span>
 									</li>
-								)}
+								)} */}
 							</ul>
 						</div>
 					</div>
@@ -289,67 +356,106 @@ const Home = () => {
 		// }, [chain])
 		return (
 			<div className="chain">
-				{
-					issure === true ?
-						<img className="icon" src={`/networks/${G.targetChain}.svg`} alt={chain} />
-						:
-						Object.keys(networks).map((k, index) => (
-							k === G.chain ? <>
-								{index === 0 ?
-									<>
-										<img className="icon" src={`/networks/${chainArray[index + 1]}.svg`} alt={chain} />
-									</> :
-									<>
-										{
-											<img className="icon" src={`/networks/${chainArray[index - 1]}.svg`} alt={chain} />
-										}
-									</>
-								}
-							</> : <>
-							</>
-						)
-						)}
+				<img className="icon" src={`/networks/${G.targetChain}.svg`} alt={chain} />
 				<div className="flex" style={{ marginTop: 10 }}>
-					{
-						issure === true ?
-							<div className="fill">{L['chain.' + chain.toLowerCase()]}</div>
-							:
-							Object.keys(networks).map((k, index) => (
-								k === G.chain ? <>
-									{index === 0 ?
-										<>
-											<div className="fill">{`${netArray[index + 1]}`} network</div>
-										</> :
-										<>
-											{
-												<div className="fill">{`${netArray[index - 1]}`} network</div>
-											}
-										</>
-									}
-								</> : <>
-								</>
-							))
-					}
+					<div className="fill">{L['chain.' + chain.toLowerCase()]}</div>
 					<div>
 						<div className="menu">
 							<i><span className="ic-down"></span></i>
 							<ul ref={refMenu} style={{ width: 150 }}>
-								{Object.keys(networks).map(k =>
-									<>
-										{
-											k === G.chain ? null :
-												<li className={''} key={k} onClick={() => onChangeNetwork2(k)}>
-													<img className="icon" src={`/networks/${k}.svg`} alt={k} />
-													<span>{L['chain.' + k.toLowerCase()]}</span>
-												</li>
-										}
-									</>
-								)}
+								{/* {Object.keys(networks).map(k =>
+
+								// <li className={!!networks[k].disabled ? 'disabled' : ''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
+								// 	<img className="icon" src={`/networks/${k}.svg`} alt="eth" />
+								// 	<span>{L['chain.' + k.toLowerCase()]}</span>
+								// </li>
+								(G.chain === k ? null :
+									<li className={''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork2(k)}>
+										<img className="icon" src={`/networks/${k}.svg`} alt={k} />
+										<span>{L['chain.' + k.toLowerCase()]}</span>
+									</li>
+								)
+								)} */}
 							</ul>
 						</div>
 					</div>
 				</div>
 			</div>
+		)
+	}
+	// @ts-ignore
+	const chainSelectActive = useRef(null);
+
+	// for design effect
+	const ChainActive = (id: any) => {
+		console.log(id);
+		if (isActive !== '') {
+			window.document.getElementById(`${isActive}`)?.classList.remove('active');
+		}
+		if (id !== '') {
+			setIsActive(id);
+			window.document.getElementById(`${id}`)?.classList.add('active');
+		}
+		// chainSelectActive.id.classList.toggle('active');
+	}
+	const TokenSelect = (para: boolean) => {
+		return (
+			<>
+				<div className='token-select-modal'>
+					<div className='modal-bg' onClick={() => setTokenSelectModal(false)}></div>
+					<div className='modal-body'>
+						<div className='p2'>
+
+							<div className='justify p1'>
+								<div className=''>
+									<h3 style={{ margin: '0', color: '#f3ba2f' }}>
+										Token List
+									</h3>
+								</div>
+								<div className='token-select-modal-cancel' onClick={() => setTokenSelectModal(false)}>
+									X
+								</div>
+							</div>
+							{/* <div className='justify p1'>
+								<div className=''>
+									<input placeholder='Search name or paste address' />
+								</div>
+							</div> */}
+						</div>
+						<div className='row'>
+							<div className='col-sm-3 col-md-3' style={{ borderTop: '1px grey solid' }}>
+								<div className='border-right-top-10 over-h' style={{ background: '#2b2d2c', padding: '10px' }}>
+									{Object.keys(networks).map(k =>
+									(
+										<a className='justify fd-c' onClick={(e: any) => para ? onChangeNetwork(k) : onChangeNetwork2(k)}>
+											<li ref={chainSelectActive} id={k} className={'chain-select justify w10'} key={k} >
+												<img className="icon" width={'30px'} src={`/networks/${k}.svg`} alt={k} />
+												<span>{L['chain.' + k.toLowerCase()]}</span>
+											</li>
+										</a>
+									)
+									)}
+								</div>
+							</div>
+							<div className='col-sm-9 col-md-9 pr1 pl1' style={{ borderTop: '1px grey solid' }}>
+								<div className='justify pr1'>
+									<div onClick={() => setTokenSelectModal(false)} className='justify mt2 w10 token-hover'>
+										<div className=''>
+											<img className="icon" width={'60px'} src={`/img/flash-logo.png`} alt={'flash-logo.png'} />
+										</div>
+										<div className='pr1'>
+											<h3 className='' style={{ margin: '0', padding: '0' }}>
+												FLASH<br />
+												flash coin
+											</h3>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</>
 		)
 	}
 
@@ -366,52 +472,124 @@ const Home = () => {
 	}
 	pendingTxs.sort((a, b) => b.created - a.created)
 
-	const nativeCoin = networks[G.chain].coin
-	const tokenArray: Array<string> = [nativeCoin];
-	for (let k in G.coins) {
-		if (k === nativeCoin) continue
-		const v = G.coins[k]
-		if (v[G.chain] !== undefined && v[G.targetChain] !== undefined) {
-			if (query !== '' && k.toLowerCase().indexOf(query) === -1) continue
-			tokenArray.push(k)
-		}
-	}
+	// const nativeCoin = networks[G.chain].coin
+	// const tokenArray: Array<string> = [nativeCoin];
+	// for (let k in G.coins) {
+	// 	if (k === nativeCoin) continue
+	// 	const v = G.coins[k]
+	// 	if (v[G.chain] !== undefined && v[G.targetChain] !== undefined) {
+	// 		if (query !== '' && k.toLowerCase().indexOf(query) === -1) continue
+	// 		tokenArray.push(k)
+	// 	}
+	// }
 	let loading = G.status === CONNECTING || status.loading;
 
 	return <Layout className="home">
 		<section>
-			<div className="c4 o1-md">
-				<div className="panel">
-					<h1 className="cmd">{L['bridge']}</h1>
-					<p className="gray">{L['description']}</p>
-					<div className="mt4 mb-3"><a href="/" className="button">Introduction video</a></div>
-					<p><a className="cmd" href="/">View Proof of Assets</a></p>
-					<p><a className="cmd" href="/">User Guide</a></p>
-					<div className="hide-md" style={{ marginTop: 20 }}>
-						<img src="/flash-logo.png" alt="logo" style={{ width: '100%', opacity: 0.8 }} />
-					</div>
-				</div>
-			</div>
 			<div className="c ml3-md">
 				<div className="panel swap">
-					<p className="gray">If you have not add Polygon chain, Cronos chain, Binance chain networks in your MetaMask yet, please click <span className="cmd" onClick={addNetwork}>Add network</span> and continue</p>
-					<div className="flex">
-						<div className="c">
-							{/* {ViewNetwork(G.chain)} */}
-							{ViewNetwork(G.chain)}
+					<div className='justify'>
+						<div className='justify'>
+							<div className='justify'>
+								<img style={{ width: '35px' }} src={`./networks/${G.chain}.svg`} ></img>
+								<img style={{ width: '39px', marginLeft: '-13px', border: '3px black solid', borderRadius: '50%' }} src={`./networks/${G.targetChain}.svg`} ></img>
+							</div>
+							<div className='ml1'>
+								<div className='justify'>
+									<span className='chain-font opa1i'>
+										Multichain
+									</span>
+								</div>
+								<div className='justify'>
+									<span className='chain-font'>{G.chain}</span>
+									<span className='chain-font'>&nbsp;&nbsp;to&nbsp;&nbsp;</span>
+									<span className='chain-font'>{G.targetChain}</span>
+
+								</div>
+							</div>
 						</div>
-						<div className="flex middle center" style={{ paddingLeft: 20, paddingRight: 20 }}>
-							{/* <button className="button switch" onClick={() => swapChains()}> */}
-							<button className="button switch">
-								<svg fill="white" width="18" viewBox="0 0 18 18"><path d="M10.47 1L9.06 2.41l5.1 5.1H0V9.5h14.15l-5.09 5.09L10.47 16l7.5-7.5-7.5-7.5z"></path></svg>
-							</button>
+						<div className=''>
+
+						</div>
+					</div>
+					{/* <div className="flex">
+						<div className="c">
+							{ViewNetwork(G.chain)}
 						</div>
 						<div className="c">
 							{ViewNetwork2(G.targetChain)}
 						</div>
+					</div> */}
+					{
+						tokenSelectModal === true && <>
+							{
+								noTargetChain ? TokenSelect(true) : TokenSelect(false)
+							}
+						</>
+					}
+					<div className="dis-f jc-sb mt2">
+						<div className=''>
+							<button onClick={() => { setNotargetChain(true); setTokenSelectModal(true); }} className='token-select-btn'>
+								Select Token
+							</button>
+						</div>
+						<div className=''>
+							<input ref={refAmount} className="amount tr" type="input" value={G.value} onChange={(e) => onChangeValue(e.target.value)} />
+							<br />
+							<div className='tr' style={{ marginRight: '4px' }}>{countFlashPrice} $</div>
+						</div>
 					</div>
-					<div className="label" style={{ paddingTop: 30 }}>Asset</div>
-					<div className="asset">
+					<div className="mt2">
+						<div className='po-re before-af w10'>
+							<div className='swap-switcher'>
+								<button className='switcher'>
+									<img src='./img/swap.svg'></img>
+								</button>
+							</div>
+						</div>
+					</div>
+					<div className="dis-f jc-sb mt6">
+						<div className=''>
+							<button onClick={() => { setNotargetChain(false); setTokenSelectModal(true); }} className='token-select-btn'>
+								Select Token
+							</button>
+						</div>
+						<div className=''>
+							<input ref={refAmount} className="amount tr" type="input" value={G.value} onChange={(e) => onChangeValue(e.target.value)} />
+							<br />
+							<div className='tr' style={{ marginRight: '4px' }}>{countFlashPrice} $</div>
+						</div>
+					</div>
+
+					<div className='justify po-re mt5 pr2 pl2'>
+						<div className='dis-f fd-c jc-c ai-c tc'>
+							<img className='mauto' src='/flash-logo.png' width={'35px'} />
+							<span className='chain-font'>{G.chain}</span>
+						</div>
+						<div className='flex1 dis-f fd-c jc-c ai-c tc'>
+							<div className='dashboard-line'></div>
+							<br />
+						</div>
+						<div className='dis-f fd-c jc-c ai-c tc po-re'>
+							<img className='mauto' src='/flash-logo.png' width={'35px'} />
+							<br />
+							<span className='chain-font flash-bridge'>FLASH&nbsp;Bridge</span>
+						</div>
+						<div className='flex1 dis-f fd-c jc-c ai-c tc'>
+							<div className='dashboard-line'></div>
+							<br />
+						</div>
+						<div className='dis-f fd-c jc-c ai-c tc'>
+							<img className='mauto' src='/flash-logo.png' width={'35px'} />
+							<span className='chain-font'>{G.targetChain}</span>
+						</div>
+
+						{/* <div className='dashboard-line'></div>
+						<div className='dashboard-line'></div> */}
+
+					</div>
+					{/* <div className="label" style={{ paddingTop: 30 }}>Asset</div> */}
+					{/* <div className="asset">
 						<input ref={refList} id="asset" type="checkbox" style={{ display: 'none' }} />
 						<label className="asset" htmlFor="asset">
 							<div className="flex" style={{ alignItems: 'center' }}>
@@ -419,29 +597,9 @@ const Home = () => {
 								<span>{'FLASH'} <small>coin</small></span>
 							</div>
 							<div>
-								{/* <svg width="11" fill="#888" viewBox="0 0 11 11"><path d="M6.431 5.25L2.166 9.581l.918.919 5.25-5.25L3.084 0l-.918.919L6.43 5.25z"></path></svg> */}
 							</div>
 						</label>
-
-						{/* <div className="list">
-							<div className="search">
-							<img src={`/img/flash-logo.png`} loading='lazy' style={{ width: 20, height: 20, marginRight: 10 }} alt={'FLASH'} />
-
-								<svg width="24" height="24" fill="#5e6673" viewBox="0 0 24 24"><path d="M3 10.982c0 3.845 3.137 6.982 6.982 6.982 1.518 0 3.036-.506 4.149-1.416L18.583 21 20 19.583l-4.452-4.452c.81-1.113 1.416-2.631 1.416-4.149 0-1.922-.81-3.643-2.023-4.958C13.726 4.81 11.905 4 9.982 4 6.137 4 3 7.137 3 10.982zM13.423 7.44a4.819 4.819 0 011.416 3.441c0 1.315-.506 2.53-1.416 3.44a4.819 4.819 0 01-3.44 1.417 4.819 4.819 0 01-3.441-1.417c-1.012-.81-1.518-2.023-1.518-3.339 0-1.315.506-2.53 1.416-3.44.911-1.012 2.227-1.518 3.542-1.518 1.316 0 2.53.506 3.44 1.416z"></path></svg>
-								<input type="text" value={status.query} maxLength={6} onChange={(e) => onChangeQuery(e.target.value.trim())} />
-							</div>
-							<div style={{ overflowY: 'auto', maxHeight: 200, boxShadow: '0 3px 5px #000' }}>
-								<ul>
-									<li >
-										<img src={`/img/flash-logo.png`} loading='lazy' style={{ width: 20, height: 20, marginRight: 10 }} alt={'FLASH'} />
-										<span>{k}</span>
-										<small>{erc20}</small>
-									</li>
-								</ul>
-							</div>
-						</div> */}
-						<label className="overlay" htmlFor="asset"></label>
-					</div>
+					</div> */}
 
 
 					{G.inited ? (
@@ -449,16 +607,18 @@ const Home = () => {
 							<p style={{ color: 'red', backgroundColor: '#2b2f36', padding: 10 }}>{`We do not support ${L['chain.' + G.targetChain.toLowerCase()]}'s ${G.token} swap now.`}</p>
 						) : null
 					) : null}
-					<div className="label" style={{ paddingTop: 20 }}>Amount</div>
+					{/* <p style={{ color: 'red', backgroundColor: '#2b2f36', padding: 10 }}>{`We do not support ${G.targetChain}`}</p> */}
+
+					{/* <div className="label" style={{ paddingTop: 20 }}>Amount</div>
 					<div>
 						<input ref={refAmount} className="amount" type="number" value={G.value} onChange={(e) => onChangeValue(e.target.value)} />
-					</div>
+					</div> */}
 
 					{G.value !== '' && targetToken ? (
 						<p className="gray">You will receive ≈ {G.value} {G.token === '-' ? networks[G.chain].coin : G.token} <small>({targetToken.address === '-' ? 'native token' : networks[G.targetChain].erc20})</small></p>
 					) : null}
 					<div style={{ paddingTop: 20 }}>
-						<button disabled={loading || supported} className="primary full" onClick={submit}>
+						<button disabled={loading || supported || G.targetChain === G.chain} className="primary full" onClick={submit}>
 							{loading ? (
 								<div className="flex middle">
 									<div style={{ width: '1.5em' }}>
@@ -482,22 +642,29 @@ const Home = () => {
 								{pendingTxs.map((v, k) => (
 									<div className={"tx flex" + (G.txs[v.key]?.tx ? '' : ' pending')} key={k}>
 										<div className="c1">
-											<img src={`/networks/${v.chain}.svg`} style={{ width: 16, height: 16, marginRight: 5 }} alt={v.chain} />
-											<span>To</span>
-											<img src={`/networks/${v.targetChain}.svg`} style={{ width: 16, height: 16, marginLeft: 5 }} alt={v.targetChain} />
+											<img src={`/networks/${v.chain}.svg`} style={{ border: '1px white solid', borderRadius: '50%', width: 16, height: 16, marginRight: 5 }} alt={v.chain} />
+											<span> To </span>
+											<img src={`/networks/${v.targetChain}.svg`} style={{ border: '1px white solid', borderRadius: '50%', width: 16, height: 16, marginLeft: 5 }} alt={v.targetChain} />
 										</div>
 										<code className="c2"><a className="cmd" href={networks[v.chain].explorer + '/tx/' + v.key} target="_blank" rel="noreferrer" >{v.key.slice(0, 10) + '...' + v.key.slice(-4)}</a></code>
 										<code className="c3">
-											<img src={`/coins/${v.token}.svg`} loading='lazy' style={{ width: 20, height: 20, marginRight: 5 }} alt={v.token} />
+											<img src={`/flash-logo.png`} loading='lazy' style={{ width: 20, height: 20, marginRight: 5 }} alt={v.token} />
 											<span title={G.txs[v.key]?.fee || ''}>{v.value}</span>
 										</code>
+
+
 										<div className="c4" style={{ textAlign: "right" }}>
 											{G.txs[v.key] ? (
 												G.txs[v.key].tx ? (
 													<a className="cmd" href={networks[v.targetChain].explorer + '/tx/' + G.txs[v.key].tx} target="_blank" rel="noreferrer">view result</a>
 												) : (
-													G.txs[v.key].err ? (<code style={{ color: 'red' }}>error</code>) : (<code style={{ color: '#76808f' }}>{G.txs[v.key].confirmations >= networks[v.chain].confirmations ? 'processing…' : G.txs[v.key].confirmations + ' / ' + networks[v.chain].confirmations}</code>
-													))
+													G.txs[v.key].err ? (<code style={{ color: 'red' }}>error</code>) :
+														(
+															<code style={{ color: '#76808f' }}>
+																{G.txs[v.key].confirmations >= networks[v.chain].confirmations ? 'processing…' : G.txs[v.key].confirmations + ' / ' + networks[v.chain].confirmations}
+															</code>
+														)
+												)
 											) : <code style={{ color: '#76808f' }}>confirming...</code>
 											}
 										</div>

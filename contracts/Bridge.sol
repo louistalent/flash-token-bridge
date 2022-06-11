@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./Ownable.sol";
-import "./flash.sol";
+import "./IRC20.sol";
 import "./IBridge.sol";
 
 contract Bridge is Ownable, IBridge {
@@ -25,7 +25,7 @@ contract Bridge is Ownable, IBridge {
 	function addToken(address[] memory _tokens) external override onlyAdmin {
 		address _this = address(this);
 		for(uint i=0; i<_tokens.length; i++) {
-			FlashToken _token = FlashToken(_tokens[i]);
+			IRC20 _token = IRC20(_tokens[i]);
 			require(_token.owner()==_this, "bridge: owner");
 			require(_token.totalSupply()==0, "bridge: totalsupply");
 			tokens.push(_tokens[i]);
@@ -36,7 +36,7 @@ contract Bridge is Ownable, IBridge {
 	function createToken(string[] memory _names, string[] memory _symbols, uint8[] memory _decimals) external override onlyAdmin {
 		require(_names.length==_symbols.length && _symbols.length==_decimals.length,"bridge: array size");
 		for(uint i=0; i<_names.length; i++) {
-			FlashToken _tokenContract = new FlashToken(_names[i], _symbols[i], _decimals[i]);
+			IRC20 _tokenContract = new IRC20(_names[i], _symbols[i], _decimals[i]);
 			address _token = address(_tokenContract);
 			tokens.push(_token);
 			tokenIndexes[_token] = ++tokenCount;
@@ -52,12 +52,12 @@ contract Bridge is Ownable, IBridge {
 		if (_token==address(0)) {
 			require(msg.value==_amount, "bridge: amount");
 		} else {
-			// bool isPegged = tokenIndexes[_token]!=0;
-			// if (isPegged) {
-			// 	IRC20(_token).burnFrom(_account, _amount);
-			// } else {
-				FlashToken(_token).transferFrom(_account, address(this), _amount);
-			// }
+			bool isPegged = tokenIndexes[_token]!=0;
+			if (isPegged) {
+				IRC20(_token).burnFrom(_account, _amount);
+			} else {
+				IRC20(_token).transferFrom(_account, address(this), _amount);
+			}
 		}
 		emit Deposit(_token, _account, _amount, _targetChain);
 	}
@@ -73,12 +73,12 @@ contract Bridge is Ownable, IBridge {
 				if (_token==address(0)) {
 					payable(_to).transfer(_amount);
 				} else {
-					// isPegged = tokenIndexes[_token]!=0;
-					// if (isPegged) {
-					// 	IRC20(_token).mintTo(_to, _amount);
-					// } else {
-						FlashToken(_token).transfer(_to, _amount);
-					// }
+					isPegged = tokenIndexes[_token]!=0;
+					if (isPegged) {
+						IRC20(_token).mintTo(_to, _amount);
+					} else {
+						IRC20(_token).transfer(_to, _amount);
+					}
 				}
 				exists[_extra] = true;
 			}

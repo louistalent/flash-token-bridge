@@ -15,6 +15,7 @@ Object.keys(networks).map(k => chainIds[networks[k].chainId] = k);
 const initial: WalletTypes = {
 	chainIds,
 	chainId: networks[DEFAULT_NET].chainId,
+	chainIdMatch: 56,
 	rpc: networks[DEFAULT_NET].rpc,
 	status: 'disconnected',
 	address: '',
@@ -40,9 +41,25 @@ const initialState: BridgeTypes = {
 	...initial,
 	chain: 'BSC',
 	targetChain: 'POL',
-	token: 'BSC',
-	value: '',
+	token: 'FLASH',
+	value: '0001',
+	flashcoins: {
+		BSC: {
+			decimal: 18,
+			address: process.env.REACT_APP_ADDRESS_BSC
+		},
+		CRO: {
+			decimal: 18,
+			address: process.env.REACT_APP_ADDRESS_CRO
+		},
+		POL: {
+			decimal: 18,
+			address: process.env.REACT_APP_ADDRESS_POL
+		},
+	},
 }
+//I should automatically create a flashcoins object.
+//Current flashcoins is created statically
 
 export default createSlice({
 	name: 'bridge',

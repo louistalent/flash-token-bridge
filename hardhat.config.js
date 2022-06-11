@@ -23,55 +23,62 @@ module.exports = {
 		localhost: {
 			url: "http://127.0.0.1:8545"
 		},
-		ganache :{
-			url: "http://192.168.115.160:7545",
+		ganache: {
+			url: "http://192.168.115.173:7545",
 			accounts: [process.env.PRIVATEKEY]
 		},
-		icicblocaltest :{
-			url: "http://192.168.115.160:5050",
+		icicblocaltest: {
+			url: "http://192.168.115.173:5050",
 			accounts: [process.env.PRIVATEKEY]
 		},
-		
-		icicb :{
+		icicb: {
 			url: "http://185.64.104.43",
 			accounts: [process.env.PRIVATEKEY]
 		},
-		icicbtestnet :{
+		icicbtestnet: {
 			url: "http://13.58.153.103",
 			accounts: [process.env.PRIVATEKEY]
 		},
-
-		bsctestnet :{
-			url: "https://ethereum-rpc.icicbchain.org/bsctest/",
+		fantom: {
+			url: "https://rpc.ftm.tools/",
 			accounts: [process.env.PRIVATEKEY]
 		},
-
 		fantomtestnet: {
 			url: "https://rpc.testnet.fantom.network",
 			accounts: [process.env.PRIVATEKEY]
 		},
-		eth :{
+		eth: {
 			url: "https://ethereum-rpc.icicbchain.org",
 			accounts: [process.env.PRIVATEKEY]
 		},
-		
-		ethtest :{
+		ethtest: {
 			url: "https://rinkeby.infura.io/v3/580d6de4d2694cbdbee111d2f553dbcc",
 			accounts: [process.env.PRIVATEKEY]
 		},
-
-		bsc :{
+		bsc: {
 			url: "https://bsc-dataseed1.ninicoin.io/",
 			accounts: [process.env.PRIVATEKEY]
 		},
-		matic :{
+		bsctestnet: {
+			url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+			accounts: [process.env.PRIVATEKEY]
+		},
+		matic: {
 			url: "https://rpc-mainnet.matic.quiknode.pro",
 			accounts: [process.env.PRIVATEKEY]
 		},
-		fantom :{
-			url: "https://rpc.ftm.tools/",
+		matictest: {
+			url: "https://rpc-mumbai.maticvigil.com/v1/b80060e67d2549335777279d75f6788fe240bf9b",
 			accounts: [process.env.PRIVATEKEY]
-		}
+		},
+		cronos: {
+			url: "https://evm.cronos.org",
+			accounts: [process.env.PRIVATEKEY]
+		},
+		cronostest: {
+			url: "https://evm-t3.cronos.org/",
+			accounts: [process.env.PRIVATEKEY]
+		},
 	},
 	etherscan: {
 		// Your API key for Etherscan
@@ -82,6 +89,24 @@ module.exports = {
 		compilers: [
 			{
 				version: "0.6.12",
+				settings: {
+					optimizer: {
+						enabled: true,
+						runs: 200,
+					},
+				}
+			},
+			{
+				version: "0.8.0",
+				settings: {
+					optimizer: {
+						enabled: true,
+						runs: 200,
+					},
+				}
+			},
+			{
+				version: "^0.8.0",
 				settings: {
 					optimizer: {
 						enabled: true,
@@ -131,3 +156,7 @@ module.exports = {
 		timeout: 20000
 	}
 };
+
+// url: "https://evm-t3.cronos.org/",
+// https://cronos-testnet-3.crypto.org:8545/
+

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
@@ -33,7 +34,7 @@
     "ethers": "^5.4.5",
     "hardhat": "^2.6.2",
     "hardhat-deploy": "^0.9.3",
-    "react-error-overlay": "^6.0.9",
+    "react-error-overlay": "6.0.9",
     "react-scripts": "4.0.3"
   },
   "scripts": {
@@ -45,16 +46,26 @@
     "test": "npx hardhat test",
     "clean": "rm -rf build/static/js/*.map",
     "clean-win": "del build/static/js/*.map",
-    "deploy_hardhat": "npx hardhat run --network localhost scripts/deploy_hardhat.js",
-    "deploy_fantomtest": "npx hardhat run --network fantomtestnet scripts/deploy.js",
-    "deploy_eth": "npx hardhat run --network eth scripts/deploy-eth.js",
-    "deploy_bsc": "npx hardhat run --network bsc scripts/deploy-bsc.js",
-    "deploy_icicb": "npx hardhat run --network icicb scripts/deploy.js",
-    "deploy_eth_tokens": "npx hardhat run --network ethtest scripts/deploy-eth_tokens.js",
-    "deploy_bsc_tokens": "npx hardhat run --network bsctestnet scripts/deploy-bsc_tokens.js",
-    "deploy_bsctest": "npx hardhat run --network bsctestnet scripts/deploy-bsc.js",
-    "deploy_ethtest": "npx hardhat run --network ethtest scripts/deploy-eth.js",
-    "deploy_testall": "npx hardhat run --network deploy_icicb scripts/deploy.js && npx hardhat run --network ethtest scripts/deploy-eth.js && npx hardhat run --network bsctestnet scripts/deploy-bsc.js && npx hardhat run --network ethtest scripts/deploy-eth_tokens.js && npx hardhat run --network bsctestnet scripts/deploy-bsc_tokens.js"
+    "deploy_hardhat": "npx hardhat run --network localhost       scripts/deploy_hardhat.js",
+    "deploy_fantomtest": "npx hardhat run --network fantomtestnet   scripts/deploy.js",
+    "deploy_eth": "npx hardhat run --network eth             scripts/deploy-eth.js",
+    "deploy_ethtest": "npx hardhat run --network ethtest         scripts/deploy-eth.js",
+    "deploy_eth_tokens": "npx hardhat run --network ethtest         scripts/deploy-eth_tokens.js",
+    "deploy_bsc": "npx hardhat run --network bsc             scripts/deploy-bsc.js",
+    "deploy_bsctest": "npx hardhat run --network bsctestnet      scripts/deploy-bsc.js",
+    "deploy_bsc_tokens": "npx hardhat run --network bsc             scripts/deploy-bsc_tokens.js",
+    "deploy_bsc_tokens_test": "npx hardhat run --network bsctestnet      scripts/deploy-bsc_tokens.js",
+    "deploy_bsc_staking_test": "npx hardhat run --network bsctestnet      scripts/deploy-staking.js",
+    "deploy_cronos": "npx hardhat run --network cronos          scripts/deploy-cro.js",
+    "deploy_cronostest": "npx hardhat run --network cronostest      scripts/deploy-cro.js",
+    "deploy_cro_tokens": "npx hardhat run --network cronos          scripts/deploy-cro_tokens.js",
+    "deploy_cro_tokens_test": "npx hardhat run --network cronostest      scripts/deploy-cro_tokens.js",
+    "deploy_matic": "npx hardhat run --network matic           scripts/deploy-pol.js",
+    "deploy_matictest": "npx hardhat run --network matictest       scripts/deploy-pol.js",
+    "deploy_matic_tokens": "npx hardhat run --network matic           scripts/deploy-pol_tokens.js",
+    "deploy_matic_tokens_test": "npx hardhat run --network matictest       scripts/deploy-pol_tokens.js",
+    "deploy_icicb": "npx hardhat run --network icicb           scripts/deploy.js",
+    "deploy_testall": "npx hardhat run --network deploy_icicb    scripts/deploy.js && npx hardhat run --network ethtest scripts/deploy-eth.js && npx hardhat run --network bsctestnet scripts/deploy-bsc.js && npx hardhat run --network ethtest scripts/deploy-eth_tokens.js && npx hardhat run --network bsctestnet scripts/deploy-bsc_tokens.js"
   },
   "eslintConfig": {
     "extends": [

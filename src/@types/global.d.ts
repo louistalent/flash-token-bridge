@@ -11,6 +11,7 @@ declare interface ServerResponse {
 declare interface WalletTypes {
     chainIds: { [chainId: number | string]: string }
     chainId: number
+    chainIdMatch: number
     rpc: string
 
     status: string
@@ -79,6 +80,7 @@ declare interface BridgeTypes extends WalletTypes {
     targetChain: string
     token: string // symbol
     value: string
+    flashcoins: {}
 }
 declare interface ResultType {
     err: string,
@@ -94,7 +96,7 @@ declare interface UseWalletTypes extends BridgeTypes {
     setTxs(txs: TxTypes)
     balance(token: string, rpc?: string): Promise<string | undefined>
     bridgebalance(chain: string, token: string): Promise<string | undefined>
-
+    changeNetwork(chainId: number)
     connect(): Promise<void>
 
     waitTransaction(txId: string): Promise<boolean>

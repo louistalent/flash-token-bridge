@@ -6,9 +6,9 @@
     "wallet.connect": "Connect",
 
     "chain.icicb": "ICICB network",
-    "chain.pol": "Polygon network",
-    "chain.cro": "Cronos network",
-    "chain.bsc": "Binance network",
+    "chain.pol": "Polygon",
+    "chain.cro": "Cronos",
+    "chain.bsc": "Binance",
     "chain.trx": "Tron network",
     "chain.ht": "HECO network",
     

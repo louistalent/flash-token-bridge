@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import abiFlash from './config/abis/flash.json'
+import abiFlash from './config/abis/FlashToken.json';
 import abiBridge from './config/abis/Bridge.json'
 import networks from './config/networks.json'
 import Slice from './reducer'
@@ -53,7 +53,7 @@ const useWallet = (): UseWalletTypes => {
 	React.useEffect(() => {
 		if (connected) {
 			getChainId().then(chainId => {
-				if (chainId === G.chainId) {
+				if (chainId === networks[G.chain].chainId) {
 					update({ status: CONNECTED })
 				} else {
 					update({ status: DISCONNECTED, err: ERR_DISCONNECTED })
@@ -142,8 +142,8 @@ const useWallet = (): UseWalletTypes => {
 				if (accounts === undefined) accounts = await ethereum.request({ method: 'eth_requestAccounts' })
 
 				if (accounts && accounts.length) {
-					const chainId = await getChainId();
-					if (chainId === G.chainId) {
+					const chainId = await getChainId();//wallet connected chainId
+					if (chainId === networks[G.chain].chainId) {
 						update({ status: CONNECTED, address: accounts[0], err: '' })
 						return
 					} else {
@@ -179,6 +179,21 @@ const useWallet = (): UseWalletTypes => {
 		}
 	}
 
+
+	const changeNetwork = async (chainId: number) => {
+		if (window.ethereum) {
+			try {
+				let chainHexId = toHex(chainId);
+				await window.ethereum.request({
+					method: 'wallet_switchEthereumChain',
+					params: [{ chainId: chainHexId }],
+				});
+			} catch (error) {
+				console.error(error);
+			}
+		}
+	};
+
 	const connect = async (): Promise<void> => {
 		_connect();
 	}
@@ -206,8 +221,13 @@ const useWallet = (): UseWalletTypes => {
 	}
 
 	const call = async (to: string, abi: any, method: string, args: Array<string | number | boolean>, rpc?: string): Promise<any> => {
+
 		const web3 = new window.Web3(rpc || G.rpc)
 		const contract = new web3.eth.Contract(abi, to)
+		console.log('contract.methods[method](...args).call()')
+		// return await call(token, abiFlash, 'balanceOf', [G.address])
+
+		console.log(contract.methods[method](...args).call())
 		return await contract.methods[method](...args).call()
 	}
 
@@ -303,7 +323,7 @@ const useWallet = (): UseWalletTypes => {
 		return await send(networks[G.chain].bridge, abiBridge, token === ZERO ? value : '0x0', 'deposit', [token, value, targetChain])
 	}
 
-	return { ...G, update, check, addNetwork, getPending, setPending, removePending, setTxs, connect, balance, bridgebalance, waitTransaction, approval, approve, /* depositToIcicb,  */deposit };
+	return { ...G, update, check, addNetwork, changeNetwork, getPending, setPending, removePending, setTxs, connect, balance, bridgebalance, waitTransaction, approval, approve, /* depositToIcicb,  */deposit };
 }
 
 export default useWallet

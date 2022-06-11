@@ -1,18 +1,17 @@
 {
-
     "BSC": {
-        "bridge": "",
+        "bridge": "0x20aBe9f0edc7921E8A72898e1eFBE6822be1fB4d",
         "chainId": 97,
         "coin": "BNB",
         "decimals": 18,
         "confirmations": 12,
         "blocktime": 3000,
-        "rpc": "https://ethereum-rpc.icicbchain.org/bsctest/",
+        "rpc": "https://data-seed-prebsc-1-s1.binance.org:8545",
         "explorer": "https://testnet.bscscan.com/",
         "erc20": "BEP20"
     },
     "POL": {
-        "bridge": "",
+        "bridge": "0x20aBe9f0edc7921E8A72898e1eFBE6822be1fB4d",
         "chainId": 80001,
         "coin": "MATIC",
         "decimals": 18,
@@ -23,15 +22,14 @@
         "erc20": "ERC20"
     },
     "CRO": {
-        "bridge": "",
+        "bridge": "0x20aBe9f0edc7921E8A72898e1eFBE6822be1fB4d",
         "chainId": 338,
-        "coin": "CRO",
-        "decimals": 8,
+        "coin": "TCRO",
+        "decimals": 18,
         "confirmations": 14,
         "blocktime": 6000,
-        "rpc": "https://evm-t3.cronos.org/",
+        "rpc": "https://cronos-testnet-3.crypto.org:8545/",
         "explorer": "https://cronos.org/explorer/testnet3",
         "erc20": "ERC20"
     }
 }
-

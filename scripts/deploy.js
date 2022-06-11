@@ -8,7 +8,7 @@ const abiWICICB = require("../artifacts/contracts/WICICB.sol/WICICB.json");
 const hre = require("hardhat");
 
 async function main() {
-	const admin = "0xC5df89579D7A2f85b8a4b1a6395083da394Bba92";
+	const admin = "0x79342eE3f703Cb2bcDA33942cFB64353FE40F16C";
 	const signer = await hre.ethers.getSigner();
 	const netid = 'ICICB'
 	const network = await signer.provider._networkPromise;
@@ -35,16 +35,16 @@ async function main() {
 	console.log('\tBridge\t' + bridgeAddress.green);
 
 	const tokens = [
-		['Pegged BTC',  'BTC', 	18],
-		['Pegged ETH', 	'ETH', 	18],
-		['Pegged BNB', 	'BNB', 	18],
-		['Pegged USDT', 'USDT',	18],
+		['Pegged BTC', 'BTC', 18],
+		['Pegged ETH', 'ETH', 18],
+		['Pegged BNB', 'BNB', 18],
+		['Pegged USDT', 'USDT', 18],
 		['Pegged USDC', 'USDC', 18],
-		['Pegged LTC', 	'LTC', 	18],
-		['Pegged BCH', 	'BCH', 	18],
+		['Pegged LTC', 'LTC', 18],
+		['Pegged BCH', 'BCH', 18],
 		/* ['Pegged ZEC', 	'ZEC', 	18], */
-		['Pegged XRP', 	'XRP', 	18],
-		['Pegged DOGE', 'DOGE',	18],
+		['Pegged XRP', 'XRP', 18],
+		['Pegged DOGE', 'DOGE', 18],
 		['Pegged LINK', 'LINK', 18]
 		/* ['Pegged DOT', 	'DOT', 	18],
 		['Pegged GRT', 	'GRT', 	18],
@@ -55,11 +55,11 @@ async function main() {
 	];
 	let ts = [['ICICB', '-', 'ICICB']];
 	let _tokens = []
-	for(let v of tokens) {
+	for (let v of tokens) {
 		const Token = await hre.ethers.getContractFactory("IRC20");
 		const token = await Token.deploy(v[0], v[1], v[2]);
 		const tokenAddress = token.address;
-		
+
 		const tx = await token.transferOwnership(bridgeAddress)
 		await tx.wait()
 		ts.push(['ICICB', tokenAddress, v[1]])
@@ -76,13 +76,13 @@ async function main() {
 		console.log('\t' + tokens[i][1] + '\t' + token.yellow)
 		ts.push(['ICICB', token, tokens[i][1]])
 	} */
-	fs.writeFileSync(`./coins.csv`, ts.map(v=>v.join('\t')).join('\t\n')+'\t\n');
+	fs.writeFileSync(`./coins.csv`, ts.map(v => v.join('\t')).join('\t\n') + '\t\n');
 	console.log('writing abis and addresses...'.blue);
 	/* -------------- writing... -----------------*/
-	fs.writeFileSync(`./src/config/abis/IRC20.json`,  	 JSON.stringify(abiIrc20.abi, null, 4));
-	fs.writeFileSync(`./src/config/abis/WICICB.json`,	 JSON.stringify(abiWICICB.abi, null, 4));
-	fs.writeFileSync(`./src/config/abis/Bridge.json`,  	 JSON.stringify(abiBridge.abi, null, 4));
-	fs.writeFileSync(`./src/config/networks.json`,   	 JSON.stringify({...networks, ICICB: {bridge:bridgeAddress, wicicb, chainId, coin, decimals, confirmations, blocktime, rpc, explorer, erc20}}, null, 4));
+	fs.writeFileSync(`./src/config/abis/FlashToken.json`, JSON.stringify(abiIrc20.abi, null, 4));
+	fs.writeFileSync(`./src/config/abis/WICICB.json`, JSON.stringify(abiWICICB.abi, null, 4));
+	fs.writeFileSync(`./src/config/abis/Bridge.json`, JSON.stringify(abiBridge.abi, null, 4));
+	fs.writeFileSync(`./src/config/networks.json`, JSON.stringify({ ...networks, ICICB: { bridge: bridgeAddress, wicicb, chainId, coin, decimals, confirmations, blocktime, rpc, explorer, erc20 } }, null, 4));
 }
 
 main().then(() => {

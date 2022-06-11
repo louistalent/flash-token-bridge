@@ -6,20 +6,20 @@ const networks = require("../src/config/networks.json");
 const hre = require("hardhat");
 
 async function main() {
-	const netId = "ETH"
+	const netId = "POL"
 	const decimals = 18
-	const admin = "0xC5df89579D7A2f85b8a4b1a6395083da394Bba92";
+	const admin = "0x79342eE3f703Cb2bcDA33942cFB64353FE40F16C";
 
 	const signer = await hre.ethers.getSigner();
 	const network = await signer.provider._networkPromise;
-	const rpc = 'https://rinkeby.infura.io/v3/580d6de4d2694cbdbee111d2f553dbcc'; // signer.provider.connection.url;
-	const explorer = 'https://rinkeby.etherscan.io/'; // signer.provider.connection.url;
+	const rpc = 'https://rpc-mumbai.maticvigil.com/'; // signer.provider.connection.url;
+	const explorer = 'https://mumbai.polygonscan.com/'; // signer.provider.connection.url;
 	const chainId = network.chainId;
-	const blocktime = 15000
+	const blocktime = 3000
 	const erc20 = 'ERC20';
-	const confirmations = 12
-	
-	const coin = 'ETH'
+	const confirmations = 14
+
+	const coin = 'MATIC'
 	console.log('Starting ' + netId + ('(' + String(chainId).red + ')') + ' by ', signer.address.yellow);
 
 	console.log('Deploying ' + netId + ' Bridge contract...'.blue);
@@ -29,7 +29,7 @@ async function main() {
 
 	console.log('writing network...'.blue);
 	/* -------------- writing... -----------------*/
-	fs.writeFileSync(`./src/config/networks.json`,   JSON.stringify({...networks, [netId]:{bridge:bridge.address, chainId, coin, decimals, confirmations, blocktime, rpc, explorer, erc20}}, null, 4));
+	fs.writeFileSync(`./src/config/networks.json`, JSON.stringify({ ...networks, [netId]: { bridge: bridge.address, chainId, coin, decimals, confirmations, blocktime, rpc, explorer, erc20 } }, null, 4));
 }
 
 main().then(() => {
