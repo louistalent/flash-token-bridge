@@ -98,7 +98,7 @@ const Home = () => {
 			const info = G.flashcoins;
 			const result = await request('/input-chain-info', { info, token });
 			console.log('InputChainInfo');
-
+			
 			console.log(result);
 
 		}
