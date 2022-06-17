@@ -1,0 +1,50 @@
+
+
+.wallet-connect-btn {
+    border-top-left-radius: 6.25em;
+    border-top-right-radius: 6.25em;
+    border-bottom-right-radius: 6.25em;
+    border-bottom-left-radius: 6.25em;
+    padding: 6px 9px;
+    font-size: 16px;
+    background: #2a302c;
+    color: #f3ba2f;
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    border: none;
+    cursor: pointer;
+    appearance: none;
+    user-select: none;
+    text-decoration: none;
+    transition: .3s;
+    transition-property: all;
+    transition-duration: 0.3s;
+    transition-timing-function: ease;
+    transition-delay: 0s;
+    height: 40px;
+}
+
+.wallet-connect-btn:hover {
+    background: #c1bb4b26;
+    cursor: pointer;
+}
+
+.footer-section{
+    margin-top: 3rem;
+    margin-bottom: 10px;
+    .social-list{
+         display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        a{
+            margin-right: 21px;
+            margin-bottom: 16px;
+            transition: .1s ease-in-out;
+        }
+        a:hover{
+            transform: scale(1.2);
+        }
+    }
+}

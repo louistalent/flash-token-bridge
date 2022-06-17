@@ -179,7 +179,6 @@ const useWallet = (): UseWalletTypes => {
 		}
 	}
 
-
 	const changeNetwork = async (chainId: number) => {
 		if (window.ethereum) {
 			try {

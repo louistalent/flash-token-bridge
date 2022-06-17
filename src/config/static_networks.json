@@ -1,0 +1,41 @@
+{
+    "BSC": {
+        "img": "bsc.svg"
+    },
+    "POL": {
+        "img": "polygon.svg"
+    },
+    "CRO": {
+        "img": "cronos.svg"
+    },
+    "eth": {
+        "img": "eth.svg"
+    },
+    "arbitrum": {
+        "img": "arbitrum.svg"
+    },
+    "aurora": {
+        "img": "aurora.svg"
+    },
+    "avalanche": {
+        "img": "avalanche.svg"
+    },
+    "fantom": {
+        "img": "fantom.svg"
+    },
+    "harmony": {
+        "img": "harmony.svg"
+    },
+    "solana": {
+        "img": "solana.svg"
+    },
+    "algoland": {
+        "img": "algoland.png"
+    },
+    "moonbeam": {
+        "img": "moonbeam.png"
+    },
+    "moonriver": {
+        "img": "moonriver.webp"
+    }
+}

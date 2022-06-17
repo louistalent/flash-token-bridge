@@ -136,27 +136,27 @@ header {
 	}
 }
 
-footer {
-	position: fixed;
-	width: 100%;
-	bottom: 0;
-	background-color: white;
-	color: #adb0b3;
-	display: flex;
-	justify-content: space-between !important;
-	padding: 5px 30px;
-	z-index: 100;
+// footer {
+// 	position: fixed;
+// 	width: 100%;
+// 	bottom: 0;
+// 	background-color: transparent;
+// 	color: #adb0b3;
+// 	display: flex;
+// 	justify-content: space-between !important;
+// 	padding: 5px 30px;
+// 	z-index: 100;
 
-	div a {
-		display: block;
-		cursor: pointer;
-		padding: 0 20px;
+// 	div a {
+// 		display: block;
+// 		cursor: pointer;
+// 		padding: 0 20px;
 
-		&:hover {
-			background-color: #eee;
-		}
-	}
-}
+// 		&:hover {
+// 			background-color: #eee;
+// 		}
+// 	}
+// }
 
 a {
 	text-decoration: none;
@@ -191,9 +191,9 @@ section {
 }
 
 .panel {
-	background-color: #181a19;
 	border-radius: 15px;
 	padding: 30px;
+	background-color: #181a19;
 	height: 100%;
 }
 
@@ -885,6 +885,62 @@ input::-webkit-inner-spin-button {
 		cursor: pointer;
 	}
 }
+.transaction-detail{
+	.middle-section{
+		margin-top: 10px;
+		margin-bottom: 10px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		border-top: 1px grey solid;
+		border-bottom: 1px grey solid;
+	}
+}
+
+// Tooltip -------------------------------------start 
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+/* Light */
+.light .tooltip .tooltiptext {
+  background-color: #e5eaee;
+  color: #1e2735;
+}
+
+.light .tooltip .tooltiptext::after {
+  border-color: #e5eaee transparent transparent transparent;
+}
 
 .token-select-modal {
 	.modal-bg {
@@ -899,7 +955,7 @@ input::-webkit-inner-spin-button {
 
 	.modal-body {
 		margin: auto;
-		width: 30rem;
+		width: 38.5rem;
 		z-index: 999;
 		background: #181a19;
 		border-radius: 20px;
@@ -910,15 +966,16 @@ input::-webkit-inner-spin-button {
 		list-style-type: none;
 		padding: 10px;
 		background: #181a19;
-		margin-top: 10px;
-		margin-bottom: 10px;
+		margin-top: 4px;
+		margin-bottom: 4px;
 		flex-direction: column;
 		border-radius: 10px;
 
 	}
 
 	.chain-select.active {
-		background: #c1bb4b26;
+		// background: #c1bb4b26;
+		border: 2px #e6db12ec solid;
 	}
 
 
@@ -945,15 +1002,18 @@ input::-webkit-inner-spin-button {
 	}
 
 
-	.token-hover {
-		background: #c1bb4b26;
-		border-radius: 10px 10px 10px 10px;
-		cursor: pointer;
-	}
+	// .token-hover {
+	// 	background: #c1bb4b26;
+	// 	border-radius: 10px 10px 10px 10px;
+	// 	cursor: pointer;
+	// }
 
 	.token-hover:hover {
+				background: #c1bb4b26;
+		border-radius: 10px 10px 10px 10px;
+		cursor: pointer;
 		// background: #c1bb4b26;
-		box-shadow: 0px 0px 1px 1px rgb(201, 200, 200);
+		// box-shadow: 0px 0px 1px 1px rgb(201, 200, 200);
 	}
 
 	.border-right-top-10 {
@@ -971,6 +1031,70 @@ input::-webkit-inner-spin-button {
 	left: 0;
 	z-index: 997;
 	display: flex;
+}
+// Tooltip ------------------------------------- end 
+
+
+.transaction-none{
+	display: block;
+    transition-property: opacity,height,visibility;
+    transition-duration: 500ms;
+    opacity: 0;
+	height: 0px;
+}
+.transaction-show{
+	transform: translate3d(0,0,0);
+	transition-property: opacity,height,visibility;
+    transition-duration: 500ms;
+	height: 300px;
+    opacity: 1;
+}
+.transaction-show-effect{
+	display: block;
+    transition-property: opacity,height,visibility;
+    transition-duration: 500ms;
+}
+.panel2 {
+	border-radius: 15px;
+	padding: 30px;
+	height:0px;
+}
+.trans-bg{
+	background-color: #181a19;
+	height: 300px;
+
+}
+.main-color{
+ color: #f0b90b;
+}
+.isloading{
+	position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2147483001;
+    display: flex;
+	background-color: rgb(24, 26, 25);
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity .4s ease-in-out,z-index .4s step-end;
+}
+.loading-img{
+  animation-name: loading;
+  animation-duration: 1.4s;
+    animation-timing-function: ease;
+    animation-delay: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-fill-mode: none;
+    animation-play-state: running;
+}
+@keyframes loading {
+  0%   {opacity: 1;}
+  50% {opacity: 0.3;}
+  100% {opacity: 1;}
 }
 
 .loader,
@@ -1513,15 +1637,15 @@ div.tx {
 }
 
 
-.ai-center {
+.ai-c {
 	align-items: center;
 }
 
-.ai-start {
+.ai-s {
 	align-items: flex-start;
 }
 
-.ai-end {
+.ai-e {
 	align-items: flex-end;
 }
 

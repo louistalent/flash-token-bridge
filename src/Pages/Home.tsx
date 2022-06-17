@@ -1,8 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import Layout from '../components/Layout';
-import Networks from '../config/networks.json'
+import Networks from '../config/networks.json';
+import VirtualNetworks from "../config/static_networks.json";
+import TokenList from "../config/tokenlist.json";
+
 import useWallet, { request, CONNECTED, CONNECTING, ZERO, toEther, fromEther } from '../useWallet';
 /* import { getApiUrl } from '../util'; */
+import { BsChevronDown } from "react-icons/bs";
+import { AiFillStar, AiOutlineStar, AiTwotoneStar, AiOutlineUp, AiOutlineQuestionCircle } from "react-icons/ai";
 
 const networks = Networks as { [chain: string]: NetworkTypes }
 
@@ -12,11 +17,26 @@ interface HomeStatus {
 	loading: boolean
 }
 
+interface TransactionDetails {
+	providerFee: number
+	protocalFee: number
+	slippage: number
+	value: string
+	fee: number
+	receiveValue: number
+}
+
+interface BaseStatus {
+	prices: { [chain: string]: number }
+	gasPrices: { [chain: string]: number }
+	maxGasLimit: number
+}
+
 const Home = () => {
 	const G = useWallet();
 	const L = G.L;
 	const refMenu = React.useRef<HTMLUListElement>(null)
-	const refList = React.useRef<HTMLInputElement>(null)
+	// const refList = React.useRef<HTMLInputElement>(null)
 	const refAmount = React.useRef<HTMLInputElement>(null)
 	const [flashPrice, setFlashprice] = React.useState(Number);
 	const [countFlashPrice, setCountFlashPrice] = React.useState<Number>(flashPrice);
@@ -25,11 +45,35 @@ const Home = () => {
 		submitLabel: '',
 		loading: false,
 	})
+
+	const [txDetail, setTxDetail] = React.useState<TransactionDetails>({
+		providerFee: 0,
+		protocalFee: 0,
+		slippage: 0,
+		value: '',
+		fee: 0,
+		receiveValue: 0
+	})
+	const set = (attrs: Partial<TransactionDetails>) => setTxDetail({ ...txDetail, ...attrs })
 	const [isPending, setPending] = React.useState(false);
-	const [issure, setIsSure] = React.useState(false);
+	// const [issure, setIsSure] = React.useState(false);
 	const [noTargetChain, setNotargetChain] = React.useState(false);
 	const [tokenSelectModal, setTokenSelectModal] = React.useState(false);
 	const [isActive, setIsActive] = React.useState('');
+	const [isTransaction, setIsTransaction] = React.useState(false);
+	const [selectedTokenOnChain, setSelectedTokenOnChain] = React.useState({
+		name: 'Token Select',
+		img: ''
+	});
+	const [selectedTokenOnTargetChain, setSelectedTokenOnTargetChain] = React.useState({
+		name: 'Token Select',
+		img: ''
+	});
+	const [base, setBase] = React.useState<BaseStatus>({
+		prices: {},
+		gasPrices: {},
+		maxGasLimit: 1e5,
+	})
 
 	const updateStatus = (json) => setStatus({ ...status, ...json })
 
@@ -91,6 +135,55 @@ const Home = () => {
 
 	}, [G.targetChain, G.chain])
 
+	//network gas fee
+	const [time, setTime] = React.useState(+new Date())
+	const proxy = process.env.REACT_APP_ENDPOINT || '';
+	React.useEffect(() => {
+		getInfo()
+		const timer = setTimeout(() => setTime(+new Date()), 10000)
+		return () => clearTimeout(timer)
+	}, [time, G.chain])
+	const getInfo = async () => {
+		try {
+			const res = await request('/get-gas-info', { chain: G.chain });
+
+			console.log(res?.result);
+			console.log(Math.round(+new Date() / 1000), res?.result)
+			setBase(res?.result);
+
+
+		} catch (error) {
+			console.log(error)
+		}
+	}
+	const getReceivedValue = (chain: string, targetChain: string, token: string, amount: number) => {
+		if (base.gasPrices !== undefined) {
+			const feeEther = base.maxGasLimit * base.prices[chain] / 1e9
+			// const decimals = networks[targetChain].decimals;
+			// const fee = Number((feeEther * base.prices[targetChain] / flashPrice).toFixed(decimals < 6 ? decimals : 6))
+			// if (!isNaN(fee)) {
+			// const receiveValue = Number((amount - fee).toFixed(decimals < 6 ? decimals : 6))
+			// return { receiveValue, fee }
+			// }
+			return { feeEther }
+		}
+		return { receiveValue: 0, fee: 0 }
+	}
+
+	const onChangeValueOnChain = (value: string) => {
+		const { feeEther } = getReceivedValue(G.chain, G.targetChain, G.token, Number(value))
+		console.log(feeEther);
+		set({ value, receiveValue: Number(value), fee: feeEther })
+	}
+	// React.useEffect(async()=>{
+	// 	let estimateGas = await web3.eth.estimateGas({	
+	// 		"value": '0x0', // Only tokens
+	// 		"data": contract.methods.transfer(toAddress, tokenAmount).encodeABI(),
+	// 		"from": fromAddress,
+	// 		"to": toAddress
+	// 	});
+	// },[])
+
 	// Input chain info 
 	React.useEffect(() => {
 		const InputChainInfo = async () => {
@@ -98,7 +191,7 @@ const Home = () => {
 			const info = G.flashcoins;
 			const result = await request('/input-chain-info', { info, token });
 			console.log('InputChainInfo');
-			
+
 			console.log(result);
 
 		}
@@ -119,14 +212,17 @@ const Home = () => {
 	}
 	const onChangeNetwork = (chain: string) => {
 		ChainActive(chain)
-		const net = networks[chain];
-		const chainId = net.chainId;
-		const rpc = net.rpc;
 		const _chain = 'chain'
-		G.update({ [_chain]: chain })
-		G.update({ 'chainIdMatch': chainId, rpc })
-
-		G.changeNetwork(chainId);
+		if (chain === 'CRO' || chain === 'POL' || chain === 'BSC') {
+			const net = networks[chain];
+			const chainId = net.chainId;
+			const rpc = net.rpc;
+			G.update({ [_chain]: chain })
+			G.update({ 'chainIdMatch': chainId, rpc })
+			G.changeNetwork(chainId);
+		} else {
+			G.update({ [_chain]: chain })
+		}
 
 		// const net = networks[G.targetChain]
 		// const chainId = net.chainId
@@ -140,30 +236,29 @@ const Home = () => {
 	}
 	const onChangeNetwork2 = (chain: string) => {
 		ChainActive(chain);
-		setIsSure(true);
-
-		const net = networks[chain];
-		const chainId = net.chainId;
-		const rpc = net.rpc;
+		// setIsSure(true);
 		const _chain = 'targetChain'
-		G.update({ [_chain]: chain, chainId })
+		if (chain === 'CRO' || chain === 'POL' || chain === 'BSC') {
+			const net = networks[chain];
+			const chainId = net.chainId;
+			const rpc = net.rpc;
+			G.update({ [_chain]: chain, chainId })
 
-		if (refMenu && refMenu.current) {
-			refMenu.current.style.display = 'none'
-			setTimeout(() => (refMenu && refMenu.current && (refMenu.current.style.display = '')), 100)
+			if (refMenu && refMenu.current) {
+				refMenu.current.style.display = 'none'
+				setTimeout(() => (refMenu && refMenu.current && (refMenu.current.style.display = '')), 100)
+			}
+		} else {
+			G.update({ [_chain]: chain })
 		}
 	}
 
-	const addNetwork = () => {
-		G.addNetwork()
-	}
-
-	const swapChains = () => {
-		const net = networks[G.targetChain]
-		const chainId = net.chainId
-		const rpc = net.rpc
-		G.update({ chain: G.targetChain, targetChain: G.chain, /* token, */ chainId, rpc })
-	}
+	// const swapChains = () => {
+	// 	const net = networks[G.targetChain]
+	// 	const chainId = net.chainId
+	// 	const rpc = net.rpc
+	// 	G.update({ chain: G.targetChain, targetChain: G.chain, /* token, */ chainId, rpc })
+	// }
 	const checkPending = async () => {
 		try {
 			if (!isPending) {
@@ -219,15 +314,15 @@ const Home = () => {
 			console.log(err)
 		}
 	}
-	const onChangeQuery = (query: string) => {
-		updateStatus({ query })
-	}
-	const onChangeToken = (token: string) => {
-		G.update({ token })
-		if (refList && refList.current) {
-			refList.current.checked = false
-		}
-	}
+	// const onChangeQuery = (query: string) => {
+	// 	updateStatus({ query })
+	// }
+	// const onChangeToken = (token: string) => {
+	// 	G.update({ token })
+	// 	if (refList && refList.current) {
+	// 		refList.current.checked = false
+	// 	}
+	// }
 	const onChangeValue = (value: string) => {
 		setCountFlashPrice(Number(value) * flashPrice)
 		G.update({ value })
@@ -316,74 +411,74 @@ const Home = () => {
 		}
 	}
 
-	const ViewNetwork = (chain: any) => {
-		useEffect(() => {
-			setIsSure(false);
-		}, [chain])
-		return (
-			<div className="chain">
-				<img className="icon" src={`/networks/${chain}.svg`} alt={chain} />
-				<div className="flex" style={{ marginTop: 10 }}>
-					<div className="fill">{L['chain.' + chain.toLowerCase()]}</div>
-					<div>
-						<div className="menu">
-							<i><span className="ic-down"></span></i>
-							<ul ref={refMenu} style={{ width: 150 }}>
-								{/* {Object.keys(networks).map(k =>
+	// const ViewNetwork = (chain: any) => {
+	// 	useEffect(() => {
+	// 		setIsSure(false);
+	// 	}, [chain])
+	// 	return (
+	// 		<div className="chain">
+	// 			<img className="icon" src={`/networks/${chain}.svg`} alt={chain} />
+	// 			<div className="flex" style={{ marginTop: 10 }}>
+	// 				<div className="fill">{L['chain.' + chain.toLowerCase()]}</div>
+	// 				<div>
+	// 					<div className="menu">
+	// 						<i><span className="ic-down"></span></i>
+	// 						<ul ref={refMenu} style={{ width: 150 }}>
+	// 							{/* {Object.keys(networks).map(k =>
 
-									// <li className={!!networks[k].disabled ? 'disabled' : ''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
-									// 	<img className="icon" src={`/networks/${k}.svg`} alt="eth" />
-									// 	<span>{L['chain.' + k.toLowerCase()]}</span>
-									// </li>
-									
-									<li className={''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
-										<img className="icon" src={`/networks/${k}.svg`} alt={k} />
-										<span>{L['chain.' + k.toLowerCase()]}</span>
-									</li>
-								)} */}
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		)
-	}
-	const ViewNetwork2 = (chain: any) => {
-		// const [chainMor, setChainMor] = React.useState(chain);
-		// useEffect(() => {
-		// 	if (chain !== chainMor) {
-		// 		setIsSure(true)
-		// 	}
-		// }, [chain])
-		return (
-			<div className="chain">
-				<img className="icon" src={`/networks/${G.targetChain}.svg`} alt={chain} />
-				<div className="flex" style={{ marginTop: 10 }}>
-					<div className="fill">{L['chain.' + chain.toLowerCase()]}</div>
-					<div>
-						<div className="menu">
-							<i><span className="ic-down"></span></i>
-							<ul ref={refMenu} style={{ width: 150 }}>
-								{/* {Object.keys(networks).map(k =>
+	// 								// <li className={!!networks[k].disabled ? 'disabled' : ''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
+	// 								// 	<img className="icon" src={`/networks/${k}.svg`} alt="eth" />
+	// 								// 	<span>{L['chain.' + k.toLowerCase()]}</span>
+	// 								// </li>
 
-								// <li className={!!networks[k].disabled ? 'disabled' : ''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
-								// 	<img className="icon" src={`/networks/${k}.svg`} alt="eth" />
-								// 	<span>{L['chain.' + k.toLowerCase()]}</span>
-								// </li>
-								(G.chain === k ? null :
-									<li className={''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork2(k)}>
-										<img className="icon" src={`/networks/${k}.svg`} alt={k} />
-										<span>{L['chain.' + k.toLowerCase()]}</span>
-									</li>
-								)
-								)} */}
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		)
-	}
+	// 								<li className={''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
+	// 									<img className="icon" src={`/networks/${k}.svg`} alt={k} />
+	// 									<span>{L['chain.' + k.toLowerCase()]}</span>
+	// 								</li>
+	// 							)} */}
+	// 						</ul>
+	// 					</div>
+	// 				</div>
+	// 			</div>
+	// 		</div>
+	// 	)
+	// }
+	// const ViewNetwork2 = (chain: any) => {
+	// 	// const [chainMor, setChainMor] = React.useState(chain);
+	// 	// useEffect(() => {
+	// 	// 	if (chain !== chainMor) {
+	// 	// 		setIsSure(true)
+	// 	// 	}
+	// 	// }, [chain])
+	// 	return (
+	// 		<div className="chain">
+	// 			<img className="icon" src={`/networks/${G.targetChain}.svg`} alt={chain} />
+	// 			<div className="flex" style={{ marginTop: 10 }}>
+	// 				<div className="fill">{L['chain.' + chain.toLowerCase()]}</div>
+	// 				<div>
+	// 					<div className="menu">
+	// 						<i><span className="ic-down"></span></i>
+	// 						<ul ref={refMenu} style={{ width: 150 }}>
+	// 							{/* {Object.keys(networks).map(k =>
+
+	// 							// <li className={!!networks[k].disabled ? 'disabled' : ''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
+	// 							// 	<img className="icon" src={`/networks/${k}.svg`} alt="eth" />
+	// 							// 	<span>{L['chain.' + k.toLowerCase()]}</span>
+	// 							// </li>
+	// 							(G.chain === k ? null :
+	// 								<li className={''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork2(k)}>
+	// 									<img className="icon" src={`/networks/${k}.svg`} alt={k} />
+	// 									<span>{L['chain.' + k.toLowerCase()]}</span>
+	// 								</li>
+	// 							)
+	// 							)} */}
+	// 						</ul>
+	// 					</div>
+	// 				</div>
+	// 			</div>
+	// 		</div>
+	// 	)
+	// }
 	// @ts-ignore
 	const chainSelectActive = useRef(null);
 
@@ -398,6 +493,18 @@ const Home = () => {
 			window.document.getElementById(`${id}`)?.classList.add('active');
 		}
 		// chainSelectActive.id.classList.toggle('active');
+	}
+	const TokenSelectNameImageUpdate = (value: string, para: boolean) => {
+		if (para) {
+			setSelectedTokenOnChain({ ...selectedTokenOnChain, img: value, name: value });
+		} else {
+			setSelectedTokenOnTargetChain({ ...selectedTokenOnTargetChain, name: value, img: value });
+		}
+
+	}
+	const CallTokenSelect = (value: string, para: boolean) => {
+		setTokenSelectModal(false);
+		TokenSelectNameImageUpdate(value, para);
 	}
 	const TokenSelect = (para: boolean) => {
 		return (
@@ -424,34 +531,56 @@ const Home = () => {
 							</div> */}
 						</div>
 						<div className='row'>
-							<div className='col-sm-3 col-md-3' style={{ borderTop: '1px grey solid' }}>
-								<div className='border-right-top-10 over-h' style={{ background: '#2b2d2c', padding: '10px' }}>
-									{Object.keys(networks).map(k =>
+							<div className='col-sm-4 col-md-4' style={{ borderTop: '1px grey solid' }}>
+								<div className='border-right-top-10 dis-f jc-sb fw-w over-h w10' style={{ background: '#2b2d2c', padding: '10px' }}>
+									{/* {Object.keys(networks).map(k =>
 									(
-										<a className='justify fd-c' onClick={(e: any) => para ? onChangeNetwork(k) : onChangeNetwork2(k)}>
-											<li ref={chainSelectActive} id={k} className={'chain-select justify w10'} key={k} >
+										<a key={k} className='justify fd-c' onClick={(e: any) => para ? onChangeNetwork(k) : onChangeNetwork2(k)}>
+											<li ref={chainSelectActive} id={k} className={'chain-select justify w10'}>
 												<img className="icon" width={'30px'} src={`/networks/${k}.svg`} alt={k} />
 												<span>{L['chain.' + k.toLowerCase()]}</span>
 											</li>
 										</a>
 									)
+									)} */}
+
+									{/* virtual networks */}
+									{Object.keys(VirtualNetworks).map(k =>
+									(
+										<a key={k} className='justify fd-c' style={{ width: '80px' }} onClick={(e: any) => para ? onChangeNetwork(k) : onChangeNetwork2(k)}>
+											<li ref={chainSelectActive} id={k} className={'chain-select justify w10'}>
+												<img style={{ borderRadius: '50%' }} className="icon" width={'30px'} src={`/networks/${VirtualNetworks[k].img}`} alt={k} />
+												<span>{L['chain.' + k.toLowerCase()]}</span>
+											</li>
+										</a>
+									)
 									)}
+
 								</div>
 							</div>
-							<div className='col-sm-9 col-md-9 pr1 pl1' style={{ borderTop: '1px grey solid' }}>
-								<div className='justify pr1'>
-									<div onClick={() => setTokenSelectModal(false)} className='justify mt2 w10 token-hover'>
-										<div className=''>
-											<img className="icon" width={'60px'} src={`/img/flash-logo.png`} alt={'flash-logo.png'} />
+							<div className='col-sm-8 col-md-8 pr1 pl1' style={{ borderTop: '1px grey solid' }}>
+								{G.chain === 'CRO' || G.chain === 'POL' || G.chain === 'BSC' || G.targetChain === 'CRO' || G.targetChain === 'POL' || G.targetChain === 'BSC' ?
+									Object.keys(TokenList).map((key, index) =>
+									(
+										<div key={index} className='justify pr1'>
+											<div onClick={() => CallTokenSelect(key, para)} className='justify mt2 w10 token-hover'>
+												<div className='justify'>
+													<img className="icon" width={'60px'} src={`/select-token/${key}.png`} alt={key} />
+													&nbsp;&nbsp;&nbsp;&nbsp;
+													<h4 className='' style={{ margin: '0', padding: '0' }}>
+														{key} <br />
+														{
+															TokenList[key].name
+														}
+													</h4>
+												</div>
+												<div className='pr1'>
+													<AiOutlineStar fontSize={'30px'} color='yellow' />
+												</div>
+											</div>
 										</div>
-										<div className='pr1'>
-											<h3 className='' style={{ margin: '0', padding: '0' }}>
-												FLASH<br />
-												flash coin
-											</h3>
-										</div>
-									</div>
-								</div>
+									)) : <></>
+								}
 							</div>
 						</div>
 					</div>
@@ -459,13 +588,12 @@ const Home = () => {
 			</>
 		)
 	}
-
 	const pendingTxs: Array<any> = [];
 	const targetToken = G.coins[G.token] && G.coins[G.token][G.targetChain]
 	const supported = targetToken !== undefined;
 
-	const erc20 = networks[G.chain].erc20;
-	const query = status.query.toLowerCase();
+	// const erc20 = networks[G.chain].erc20;
+	// const query = status.query.toLowerCase();
 
 
 	for (let k in G.pending) {
@@ -485,6 +613,8 @@ const Home = () => {
 	// }
 	let loading = G.status === CONNECTING || status.loading;
 
+
+
 	return <Layout className="home">
 		<section>
 			<div className="c ml3-md">
@@ -492,12 +622,12 @@ const Home = () => {
 					<div className='justify'>
 						<div className='justify'>
 							<div className='justify'>
-								<img style={{ width: '35px' }} src={`./networks/${G.chain}.svg`} ></img>
-								<img style={{ width: '39px', marginLeft: '-13px', border: '3px black solid', borderRadius: '50%' }} src={`./networks/${G.targetChain}.svg`} ></img>
+								<img alt='' style={{ width: '35px' }} src={`./networks/${G.chain}.svg`} ></img>
+								<img alt='' style={{ width: '39px', marginLeft: '-13px', border: '3px black solid', borderRadius: '50%' }} src={`./networks/${G.targetChain}.svg`} ></img>
 							</div>
 							<div className='ml1'>
 								<div className='justify'>
-									<span className='chain-font opa1i'>
+									<span className={`chain-font opa1i`}>
 										Multichain
 									</span>
 								</div>
@@ -531,11 +661,19 @@ const Home = () => {
 					<div className="dis-f jc-sb mt2">
 						<div className=''>
 							<button onClick={() => { setNotargetChain(true); setTokenSelectModal(true); }} className='token-select-btn'>
-								Select Token
+								<div className='justify'>
+									{
+										selectedTokenOnChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnChain.name} src={`/select-token/${selectedTokenOnChain.img}.png`} /> : <></>
+									}
+									&nbsp;
+									{selectedTokenOnChain.name}
+									&nbsp;
+									<BsChevronDown color='yellow' />
+								</div>
 							</button>
 						</div>
 						<div className=''>
-							<input ref={refAmount} className="amount tr" type="input" value={G.value} onChange={(e) => onChangeValue(e.target.value)} />
+							<input ref={refAmount} className="amount tr" type="input" value={G.value} onChange={(e) => { onChangeValue(e.target.value); onChangeValueOnChain(e.target.value) }} />
 							<br />
 							<div className='tr' style={{ marginRight: '4px' }}>{countFlashPrice} $</div>
 						</div>
@@ -544,7 +682,7 @@ const Home = () => {
 						<div className='po-re before-af w10'>
 							<div className='swap-switcher'>
 								<button className='switcher'>
-									<img src='./img/swap.svg'></img>
+									<img src='./img/swap.svg' alt=''></img>
 								</button>
 							</div>
 						</div>
@@ -552,7 +690,15 @@ const Home = () => {
 					<div className="dis-f jc-sb mt6">
 						<div className=''>
 							<button onClick={() => { setNotargetChain(false); setTokenSelectModal(true); }} className='token-select-btn'>
-								Select Token
+								<div className='justify'>
+									{
+										selectedTokenOnTargetChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnTargetChain.name} src={`/select-token/${selectedTokenOnTargetChain.img}.png`} /> : <></>
+									}
+									&nbsp;
+									{selectedTokenOnTargetChain.name}
+									&nbsp;
+									<BsChevronDown color='yellow' />
+								</div>
 							</button>
 						</div>
 						<div className=''>
@@ -564,7 +710,7 @@ const Home = () => {
 
 					<div className='justify po-re mt5 pr2 pl2'>
 						<div className='dis-f fd-c jc-c ai-c tc'>
-							<img className='mauto' src='/flash-logo.png' width={'35px'} />
+							<img alt='' className='mauto' src='/flash-logo.png' width={'35px'} />
 							<span className='chain-font'>{G.chain}</span>
 						</div>
 						<div className='flex1 dis-f fd-c jc-c ai-c tc'>
@@ -572,7 +718,7 @@ const Home = () => {
 							<br />
 						</div>
 						<div className='dis-f fd-c jc-c ai-c tc po-re'>
-							<img className='mauto' src='/flash-logo.png' width={'35px'} />
+							<img alt='' className='mauto' src='/flash-logo.png' width={'35px'} />
 							<br />
 							<span className='chain-font flash-bridge'>FLASH&nbsp;Bridge</span>
 						</div>
@@ -581,7 +727,7 @@ const Home = () => {
 							<br />
 						</div>
 						<div className='dis-f fd-c jc-c ai-c tc'>
-							<img className='mauto' src='/flash-logo.png' width={'35px'} />
+							<img alt='' className='mauto' src='/flash-logo.png' width={'35px'} />
 							<span className='chain-font'>{G.targetChain}</span>
 						</div>
 
@@ -677,6 +823,92 @@ const Home = () => {
 				</div>
 			</div>
 		</section>
+
+		{/* if G.address&&token is selected */}
+		{G.address && G.address.length > 0 &&
+			<section>
+				<div className="c ml3-md">
+					<div className={`panel2 transaction-detail ${isTransaction ? 'trans-bg' : ''}`}>
+						<div className='top-section tc dis-f'>
+							<a onClick={() => { setIsTransaction(!isTransaction) }} className='dis-f ai-c mauto'>
+								<AiOutlineUp style={{ fontSize: '20px', cursor: 'pointer' }} color='#f0b90b' />
+								&nbsp;&nbsp;
+								<span style={{ color: '#f0b90b' }} className='chain-font cu-po'>Transaction details</span>
+							</a>
+						</div>
+						<div className={`transaction-effect ${isTransaction ? 'transaction-show' : 'transaction-none'}`}>
+							<div className='middle-section'>
+								<div className='justify mt1 mb1'>
+									<div className='justify'>
+										<span className={`chain-font opa1i ${txDetail.fee === 0 ? 'main-color' : ''}`}> Network fee </span>
+										&nbsp;&nbsp;
+										<div className='tooltip justify'>
+											<span className="tooltiptext">Gas fee in target network taken instabletoken of source</span>
+											<AiOutlineQuestionCircle color='#f0b90b' fontSize={'22px'} />
+										</div>
+									</div>
+									<span className={`chain-font opa1i ${txDetail.fee === 0 ? 'main-color' : ''}`}>
+										{txDetail.fee}&nbsp;{networks[G.chain].coin}
+									</span>
+								</div>
+
+								<div className='justify mt1 mb1'>
+									<div className='justify'>
+										<span className={`chain-font opa1i ${txDetail.providerFee === 0 ? 'main-color' : ''}`}> Provider fee </span>
+										&nbsp;&nbsp;
+										<div className='tooltip justify'>
+											<span className="tooltiptext"> We don't require a provider fee for users</span>
+											<AiOutlineQuestionCircle color='#f0b90b' fontSize={'22px'} />
+										</div>
+									</div>
+									<span className={`chain-font opa1i ${txDetail.providerFee === 0 ? 'main-color' : ''}`}> {txDetail.providerFee}% </span>
+								</div>
+
+								<div className='justify mt1 mb1'>
+									<div className='justify'>
+										<span className={`chain-font opa1i ${txDetail.protocalFee === 0 ? 'main-color' : ''}`}> Protocal fee </span>
+										&nbsp;&nbsp;
+										<div className='tooltip justify'>
+											<span className="tooltiptext">We don't require a protocal fee for users</span>
+											<AiOutlineQuestionCircle color='#f0b90b' fontSize={'22px'} />
+										</div>
+									</div>
+									<span className={`chain-font opa1i ${txDetail.protocalFee === 0 ? 'main-color' : ''}`}> {txDetail.protocalFee}% </span>
+								</div>
+
+								{/* <div className='justify mt1 mb1'>
+									<div className='justify'>
+										<span className={`chain-font opa1i`}> 1212 </span>
+										&nbsp;&nbsp;
+										<div className='tooltip justify'>
+											<span className="tooltiptext">please write readme</span>
+											<AiOutlineQuestionCircle color='#f0b90b' fontSize={'22px'} />
+										</div>
+									</div>
+									<span className={`chain-font opa1i`}> Multichain </span>
+								</div> */}
+							</div>
+							<div className='ml1 bottom-section'>
+								<div className='justify'>
+									<span className='chain-font'>You will receive {G.token} token at this address</span>
+									<div className='justify'>
+										{G.address &&
+											<span className='chain-font'>
+												{G.address.slice(0, 5) + '...' + G.address.slice(G.address.length - 5, G.address.length)}
+											</span>
+										}
+										&nbsp;&nbsp;
+										<a href={`https:://bscscan.com.address/${G.address}`} target={'_blank'}>
+											<img src='/img/scan.png' style={{ borderRadius: '50%', border: '0px black solid' }} width='25px' height='25px' alt='scan logo'></img>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		}
 	</Layout>;
 };
 
