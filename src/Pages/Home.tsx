@@ -614,6 +614,7 @@ const Home = () => {
 	let loading = G.status === CONNECTING || status.loading;
 
 
+	// Wallet connect section
 
 	return <Layout className="home">
 		<section>
