@@ -948,7 +948,7 @@ input::-webkit-inner-spin-button {
 }
 
 .token-select-modal {
-	.modal-bg {
+	.token-select-modal-bg {
 		position: fixed;
 		right: 0;
 		top: 0;
@@ -958,7 +958,7 @@ input::-webkit-inner-spin-button {
 		background: black;
 	}
 
-	.modal-body {
+	.token-select-modal-body {
 		margin: auto;
 		width: 38.5rem;
 		z-index: 999;

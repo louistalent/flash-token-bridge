@@ -1,6 +1,6 @@
 {
     "BSC": {
-        "img": "bsc.svg"
+        "img": "binance.svg"
     },
     "POL": {
         "img": "polygon.svg"
@@ -9,7 +9,7 @@
         "img": "cronos.svg"
     },
     "eth": {
-        "img": "eth.svg"
+        "img": "ethereum.svg"
     },
     "arbitrum": {
         "img": "arbitrum.svg"

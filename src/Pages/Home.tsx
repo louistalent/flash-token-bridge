@@ -510,8 +510,8 @@ const Home = () => {
 		return (
 			<>
 				<div className='token-select-modal'>
-					<div className='modal-bg' onClick={() => setTokenSelectModal(false)}></div>
-					<div className='modal-body'>
+					<div className='token-select-modal-bg' onClick={() => setTokenSelectModal(false)}></div>
+					<div className='token-select-modal-body'>
 						<div className='p2'>
 
 							<div className='justify p1'>
