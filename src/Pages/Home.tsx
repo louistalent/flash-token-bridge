@@ -549,7 +549,7 @@ const Home = () => {
 									(
 										<a key={k} className='justify fd-c' style={{ width: '80px' }} onClick={(e: any) => para ? onChangeNetwork(k) : onChangeNetwork2(k)}>
 											<li ref={chainSelectActive} id={k} className={'chain-select justify w10'}>
-												<img style={{ borderRadius: '50%' }} className="icon" width={'30px'} src={`/networks/${VirtualNetworks[k].img}`} alt={k} />
+												<img style={{ borderRadius: '50%' }} className="icon" width={'30px'} height={'30px'} src={`/networks/${VirtualNetworks[k].img}`} alt={k} />
 												<span>{L['chain.' + k.toLowerCase()]}</span>
 											</li>
 										</a>

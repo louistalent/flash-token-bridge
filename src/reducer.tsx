@@ -13,6 +13,7 @@ const chainIds = {};
 Object.keys(networks).map(k => chainIds[networks[k].chainId] = k);
 
 const initial: WalletTypes = {
+	walletModal: false,
 	chainIds,
 	chainId: networks[DEFAULT_NET].chainId,
 	chainIdMatch: 56,

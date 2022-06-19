@@ -2,7 +2,10 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import './layout.scss';
-import useWallet, { request } from '../useWallet';
+import useWallet_, { request } from '../useWallet';
+import { useWallet } from '../hooks/useWallet';
+import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core';
+
 import networks from "../config/networks.json";
 import { AiOutlineLinkedin } from "react-icons/ai";
 
@@ -14,14 +17,19 @@ const CONNECTING = 'connecting';
 const CONNECTED = 'connected';
 
 const Layout = (props: any) => {
+    const { active, connect, chainId } = useWallet();
+    const U = useWallet_();
+    const { account } = useWeb3React();
+    const { activate, connector } = useWeb3React();
+
     const G = useSelector((state: BridgeTypes) => state);
-    const U = useWallet();
     const [isLoading, setIsLoadking] = React.useState(true);
     React.useEffect(() => {
         setTimeout(() => {
             setIsLoadking(false);
         }, 5000)
     }, [])
+
     const L = G.L;
     const connectWallet = async (accounts?: string) => {
         let err = '';
@@ -51,6 +59,59 @@ const Layout = (props: any) => {
         U.update({ status: DISCONNECTED, address: '', err })
     }
 
+    const handleConnect = async (key: string) => {
+        try {
+            await connect(key);
+            U.update({ walletModal: !G.walletModal });
+
+            // if (account !== undefined) {
+            //     dispatch({
+            //         type: "disconnect_able",
+            //         payload: true
+            //     });
+            // } else {
+            //     dispatch({
+            //         type: "disconnect_able",
+            //         payload: false
+            //     });
+            // }
+
+            //wallet modal cancel
+        } catch (err) {
+            console.log({ err });
+        }
+    };
+
+    const WalletModal = () => {
+        return (
+            <div className='modal-continer' >
+                <div className='modal-back' onClick={() => U.update({ walletModal: false })}></div>
+
+                <div className="modal-body wallet-modal" >
+                    <div className='justify'>
+                        <div className='wallet-icon-hover'>
+                            <a onClick={() => handleConnect('injected')}>
+                                <img src={'/img/metamask.png'} className='justify wallet-imgs' alt='metamask' />
+                            </a>
+                        </div>
+                        <div className='wallet-icon-hover'>
+                            <a onClick={() => handleConnect('walletconnect')}>
+                                <img src={'/img/trust.png'} className='justify wallet-imgs' alt='Trust' />
+                            </a>
+                        </div>
+                        <div className='justify'>
+                            <div className='wallet-icon-hover'>
+                                <a onClick={() => handleConnect('walletlink')}>
+                                    <img src={'/img/coinbase.png'} className='justify wallet-imgs' alt='Trust' />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     return (<>
         {
             isLoading
@@ -73,9 +134,9 @@ const Layout = (props: any) => {
                             {/* <span className="badge">{L['bridge']}</span> */}
                         </Link>
 
-                        <button onClick={() => { connectWallet() }} className='wallet-connect-btn'>
+                        <button onClick={() => { U.update({ walletModal: true }) }} className='wallet-connect-btn'>
                             {
-                                G.address ? G.address.slice(0, 5) + '...' + G.address.slice(G.address.length - 5, G.address.length) : 'Connect Wallet'
+                                account ? account.slice(0, 5) + '...' + account.slice(account.length - 5, account.length) : 'Connect Wallet'
                             }
                         </button>
 
@@ -96,6 +157,10 @@ const Layout = (props: any) => {
                         </nav>
                         <div className="dis-f ai-c jc-c w10 tc pb3"> © Copyright FLASH 2022&nbsp;,&nbsp; <a className="" href="https://linktr.ee/FlashTechnologies" style={{ color: '#f0b90b' }}>FLASH LINK</a></div>
                     </footer>
+                    {G.walletModal === true
+                        ? <WalletModal />
+                        : <></>
+                    }
                 </>
         }
     </>);

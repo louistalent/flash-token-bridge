@@ -9,6 +9,7 @@ declare interface ServerResponse {
 }
 
 declare interface WalletTypes {
+    walletModal: boolean
     chainIds: { [chainId: number | string]: string }
     chainId: number
     chainIdMatch: number

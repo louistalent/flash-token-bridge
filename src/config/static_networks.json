@@ -37,5 +37,8 @@
     },
     "moonriver": {
         "img": "moonriver.webp"
+    },
+    "polkadot": {
+        "img": "polkadot.svg"
     }
 }

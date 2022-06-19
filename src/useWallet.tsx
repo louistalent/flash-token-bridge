@@ -41,7 +41,7 @@ export const request = async (url: string, params?: any): Promise<ServerResponse
 	return null
 }
 
-const useWallet = (): UseWalletTypes => {
+const useWallet_ = (): UseWalletTypes => {
 	const G = useSelector((state: BridgeTypes) => state)
 	const L = G.L
 	const dispatch = useDispatch()
@@ -325,4 +325,4 @@ const useWallet = (): UseWalletTypes => {
 	return { ...G, update, check, addNetwork, changeNetwork, getPending, setPending, removePending, setTxs, connect, balance, bridgebalance, waitTransaction, approval, approve, /* depositToIcicb,  */deposit };
 }
 
-export default useWallet
+export default useWallet_
