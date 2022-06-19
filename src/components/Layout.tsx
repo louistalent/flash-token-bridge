@@ -30,40 +30,34 @@ const Layout = (props: any) => {
         }, 5000)
     }, [])
 
-    const L = G.L;
-    const connectWallet = async (accounts?: string) => {
+    React.useEffect(() => {
         let err = '';
         try {
-            const { ethereum } = window
-            U.update({ status: CONNECTING, err: '' })
-            if (ethereum) {
-                if (accounts === undefined) accounts = await ethereum.request({ method: 'eth_requestAccounts' })
-
-                if (accounts && accounts.length) {
-                    const chainId = Number(await ethereum.request({ method: 'eth_chainId' }));//wallet connected chainId
-                    if (chainId === networks[G.chain].chainId) {
-                        U.update({ status: CONNECTED, address: accounts[0], err: '' })
-                        return
-                    } else {
-                        err = ERR_CHAINID.replace(':chainId', String(chainId))
-                    }
+            if (account && account.length) {
+                if (chainId === networks[G.chain].chainId) {
+                    U.update({ status: CONNECTED, address: account, err: '' })
+                    return
                 } else {
-                    err = ERR_NOACCOUNTS
+                    err = ERR_CHAINID.replace(':chainId', String(chainId))
+                    return
                 }
             } else {
-                err = ERR_INSTALL
+                err = ERR_NOACCOUNTS
+                return
             }
         } catch (error: any) {
             err = '🦊 ' + error.message
         }
         U.update({ status: DISCONNECTED, address: '', err })
-    }
+
+    }, [account, chainId])
+
+    const L = G.L;
 
     const handleConnect = async (key: string) => {
         try {
             await connect(key);
             U.update({ walletModal: !G.walletModal });
-
             // if (account !== undefined) {
             //     dispatch({
             //         type: "disconnect_able",
@@ -75,7 +69,6 @@ const Layout = (props: any) => {
             //         payload: false
             //     });
             // }
-
             //wallet modal cancel
         } catch (err) {
             console.log({ err });
@@ -91,7 +84,7 @@ const Layout = (props: any) => {
                     <div className='justify'>
                         <div className='wallet-icon-hover'>
                             <a onClick={() => handleConnect('injected')}>
-                                <img src={'/img/metamask.png'} className='justify wallet-imgs' alt='metamask' />
+                                <img src={'/img/metamask.png'} className='justify wallet-imgs' alt='Metamask' />
                             </a>
                         </div>
                         <div className='wallet-icon-hover'>
@@ -102,7 +95,7 @@ const Layout = (props: any) => {
                         <div className='justify'>
                             <div className='wallet-icon-hover'>
                                 <a onClick={() => handleConnect('walletlink')}>
-                                    <img src={'/img/coinbase.png'} className='justify wallet-imgs' alt='Trust' />
+                                    <img src={'/img/coinbase.png'} className='justify wallet-imgs' alt='Coinbase' />
                                 </a>
                             </div>
                         </div>
