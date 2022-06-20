@@ -20,6 +20,10 @@
     "chain.moonbeam": "Moonbeam",
     "chain.moonriver": "Moonriver",
     "chain.polkadot": "Polkadot",
+    "chain.near": "Near",
+    "chain.cardano": "Cardano",
+    "chain.cosmos": "Cosmos",
+    "chain.tron": "Tron",
     "chain.trx": "Tron network",
     "chain.ht": "HECO network",
     

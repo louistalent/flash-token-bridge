@@ -219,10 +219,14 @@ const Home = () => {
 		setFlashprice(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8));
 		setCountFlashPrice(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8))
 	}
+
+	const [fake_dis, setFake_dis] = React.useState(true);
 	const onChangeNetwork = (chain: string) => {
 		ChainActive(chain)
 		const _chain = 'chain'
 		if (chain === 'CRO' || chain === 'POL' || chain === 'BSC') {
+			setFake_dis(true)
+
 			const net = networks[chain];
 			const chainId = net.chainId;
 			const rpc = net.rpc;
@@ -230,35 +234,32 @@ const Home = () => {
 			G.update({ 'chainIdMatch': chainId, rpc })
 			G.changeNetwork(chainId);
 		} else {
-			G.update({ [_chain]: chain })
+			setFake_dis(false)
+			// G.update({ [_chain]: chain })
 		}
 
-		// const net = networks[G.targetChain]
-		// const chainId = net.chainId
-		// const rpc = net.rpc
-		// G.update({chain:G.targetChain, targetChain:G.chain, /* token, */ chainId, rpc})
-
-		if (refMenu && refMenu.current) {
-			refMenu.current.style.display = 'none'
-			setTimeout(() => (refMenu && refMenu.current && (refMenu.current.style.display = '')), 100)
-		}
+		// if (refMenu && refMenu.current) {
+		// 	refMenu.current.style.display = 'none'
+		// 	setTimeout(() => (refMenu && refMenu.current && (refMenu.current.style.display = '')), 100)
+		// }
 	}
 	const onChangeNetwork2 = (chain: string) => {
 		ChainActive(chain);
 		// setIsSure(true);
 		const _chain = 'targetChain'
 		if (chain === 'CRO' || chain === 'POL' || chain === 'BSC') {
+			setFake_dis(true)
+
+
 			const net = networks[chain];
 			const chainId = net.chainId;
 			const rpc = net.rpc;
 			G.update({ [_chain]: chain, chainId })
 
-			if (refMenu && refMenu.current) {
-				refMenu.current.style.display = 'none'
-				setTimeout(() => (refMenu && refMenu.current && (refMenu.current.style.display = '')), 100)
-			}
 		} else {
-			G.update({ [_chain]: chain })
+			setFake_dis(false)
+
+			// G.update({ [_chain]: chain })
 		}
 	}
 
@@ -547,17 +548,16 @@ const Home = () => {
 									(
 										<a key={k} className='justify fd-c' style={{ width: '80px' }} onClick={(e: any) => para ? onChangeNetwork(k) : onChangeNetwork2(k)}>
 											<li ref={chainSelectActive} id={k} className={'chain-select justify w10'}>
-												<img style={{ borderRadius: '50%' }} className="icon" width={'30px'} height={'30px'} src={`/networks/${VirtualNetworks[k].img}`} alt={k} />
+												<img style={{ borderRadius: '50%' }} className="icon" width={'28px'} height={'28px'} src={`/networks/${VirtualNetworks[k].img}`} alt={k} />
 												<span>{L['chain.' + k.toLowerCase()]}</span>
 											</li>
 										</a>
 									)
 									)}
-
 								</div>
 							</div>
 							<div className='col-sm-8 col-md-8 pr1 pl1' style={{ borderTop: '1px grey solid' }}>
-								{G.chain === 'CRO' || G.chain === 'POL' || G.chain === 'BSC' || G.targetChain === 'CRO' || G.targetChain === 'POL' || G.targetChain === 'BSC' ?
+								{fake_dis ?
 									Object.keys(TokenList).map((key, index) =>
 									(
 										<div key={index} className='justify pr1'>
@@ -634,7 +634,7 @@ const Home = () => {
 		}
 		G.update({ status: DISCONNECTED, address: '', err })
 
-	}, [account, chainId])
+	}, [account])
 
 
 

@@ -40,5 +40,17 @@
     },
     "polkadot": {
         "img": "polkadot.svg"
+    },
+     "near": {
+        "img": "near.png"
+    },
+     "cardano": {
+        "img": "cardano.png"
+    },
+     "cosmos": {
+        "img": "cosmos.png"
+    },
+     "tron": {
+        "img": "tron.png"
     }
 }
