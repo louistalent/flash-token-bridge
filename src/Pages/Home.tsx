@@ -3,12 +3,20 @@ import Layout from '../components/Layout';
 import Networks from '../config/networks.json';
 import VirtualNetworks from "../config/static_networks.json";
 import TokenList from "../config/tokenlist.json";
+import { useWallet } from '../hooks/useWallet';
 
-import useWallet, { request, CONNECTED, CONNECTING, ZERO, toEther, fromEther } from '../useWallet';
+import useWallet_, { request, ZERO, toEther, fromEther } from '../useWallet';
 /* import { getApiUrl } from '../util'; */
 import { BsChevronDown } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar, AiTwotoneStar, AiOutlineUp, AiOutlineQuestionCircle } from "react-icons/ai";
+import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core';
 
+const ERR_INSTALL = '🦊 You must install Metamask into your browser: https://metamask.io/download.html'
+const ERR_NOACCOUNTS = '🦊 No selected address.'
+const ERR_CHAINID = '🦊 Invalid chain id #:chainId'
+const DISCONNECTED = 'disconnected';
+const CONNECTING = 'connecting';
+const CONNECTED = 'connected';
 const networks = Networks as { [chain: string]: NetworkTypes }
 
 interface HomeStatus {
@@ -33,7 +41,9 @@ interface BaseStatus {
 }
 
 const Home = () => {
-	const G = useWallet();
+	const { account } = useWeb3React();
+	const { active, connect, chainId } = useWallet();
+	const G = useWallet_();
 	const L = G.L;
 	const refMenu = React.useRef<HTMLUListElement>(null)
 	// const refList = React.useRef<HTMLInputElement>(null)
@@ -614,7 +624,31 @@ const Home = () => {
 	let loading = G.status === CONNECTING || status.loading;
 
 
-	// Wallet connect section
+	// Wallet connect monitor
+	React.useEffect(() => {
+		let err = '';
+		try {
+			if (account && account.length) {
+				G.update({ address: account, err: '' })
+				if (chainId === networks[G.chain].chainId) {
+					G.update({ status: CONNECTED, address: account, err: '' })
+					return
+				} else {
+					err = ERR_CHAINID.replace(':chainId', String(chainId))
+					return
+				}
+			} else {
+				err = ERR_NOACCOUNTS
+				return
+			}
+		} catch (error: any) {
+			err = '🦊 ' + error.message
+		}
+		G.update({ status: DISCONNECTED, address: '', err })
+
+	}, [account, chainId])
+
+
 
 	return <Layout className="home">
 		<section>

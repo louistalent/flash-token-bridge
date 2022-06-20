@@ -34,6 +34,7 @@ const Layout = (props: any) => {
         let err = '';
         try {
             if (account && account.length) {
+                U.update({ address: account, err: '' })
                 if (chainId === networks[G.chain].chainId) {
                     U.update({ status: CONNECTED, address: account, err: '' })
                     return
