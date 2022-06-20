@@ -18,13 +18,13 @@ export const toEther = (v: number | string, p?: number) => Number(BigInt(v) / Bi
 
 const AppKey = process.env.REACT_APP_GTAG || ''
 const proxy = process.env.REACT_APP_ENDPOINT || ''
-const ERR_INSTALL = '🦊 You must install Metamask into your browser: https://metamask.io/download.html'
-const ERR_DISCONNECTED = '🦊 walllet disconnected'
-const ERR_NOACCOUNTS = '🦊 No selected address.'
-const ERR_UNKNOWN = '🦊 Unknown error'
-const ERR_ASKCONNECT = '🦊 Connect to Metamask using the button on the top right.'
-const ERR_CANCELLED = '🦊 You cancelled requested operation.'
-const ERR_CHAINID = '🦊 Invalid chain id #:chainId'
+const ERR_INSTALL = '  You must install Metamask into your browser: https://metamask.io/download.html'
+const ERR_DISCONNECTED = '  walllet disconnected'
+const ERR_NOACCOUNTS = '  No selected address.'
+const ERR_UNKNOWN = '  Unknown error'
+const ERR_ASKCONNECT = '  Connect to Metamask using the button on the top right.'
+const ERR_CANCELLED = '  You cancelled requested operation.'
+const ERR_CHAINID = '  Invalid chain id #:chainId'
 
 
 export const request = async (url: string, params?: any): Promise<ServerResponse | null> => {
@@ -156,7 +156,7 @@ const useWallet_ = (): UseWalletTypes => {
 				err = ERR_INSTALL
 			}
 		} catch (error: any) {
-			err = '🦊 ' + error.message
+			err = '  ' + error.message
 		}
 		update({ status: DISCONNECTED, address: '', err })
 	}
@@ -256,19 +256,19 @@ const useWallet_ = (): UseWalletTypes => {
 						json = JSON.parse(matches[1])
 						if (json.value && json.value.data) {
 							const { code, message } = json.value.data
-							err = '🦊 ' + message + ' (' + code + ')'
+							err = '  ' + message + ' (' + code + ')'
 						} else {
-							err = '🦊 ' + error.message
+							err = '  ' + error.message
 						}
 					} catch (err1) {
-						err = '🦊 ' + error.message
+						err = '  ' + error.message
 					}
 
 				} else {
-					err = '🦊 ' + error.message
+					err = '  ' + error.message
 				}
 			} else {
-				err = '🦊 ' + error.message
+				err = '  ' + error.message
 			}
 		}
 		throw new Error(err)

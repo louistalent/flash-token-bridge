@@ -14,6 +14,7 @@ Object.keys(networks).map(k => chainIds[networks[k].chainId] = k);
 
 const initial: WalletTypes = {
 	walletModal: false,
+	walletSelect: '',
 	chainIds,
 	chainId: networks[DEFAULT_NET].chainId,
 	chainIdMatch: 56,
@@ -68,7 +69,7 @@ export default createSlice({
 	reducers: {
 		update: (state: any, action) => {
 			for (const k in action.payload) {
-				if (state[k] === undefined) new Error('🦊 undefined account item')
+				if (state[k] === undefined) new Error('  undefined account item')
 				state[k] = action.payload[k]
 			}
 		}

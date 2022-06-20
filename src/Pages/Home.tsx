@@ -1,22 +1,21 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Layout from '../components/Layout';
 import Networks from '../config/networks.json';
 import VirtualNetworks from "../config/static_networks.json";
 import TokenList from "../config/tokenlist.json";
 import { useWallet } from '../hooks/useWallet';
 
-import useWallet_, { request, ZERO, toEther, fromEther } from '../useWallet';
+import useWallet_, { request, CONNECTED, CONNECTING, DISCONNECTED, ZERO, toEther, fromEther } from '../useWallet';
 /* import { getApiUrl } from '../util'; */
 import { BsChevronDown } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar, AiTwotoneStar, AiOutlineUp, AiOutlineQuestionCircle } from "react-icons/ai";
 import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core';
+import { useStore } from 'react-redux';
+import "./Home.scss";
 
-const ERR_INSTALL = '🦊 You must install Metamask into your browser: https://metamask.io/download.html'
-const ERR_NOACCOUNTS = '🦊 No selected address.'
-const ERR_CHAINID = '🦊 Invalid chain id #:chainId'
-const DISCONNECTED = 'disconnected';
-const CONNECTING = 'connecting';
-const CONNECTED = 'connected';
+const ERR_NOACCOUNTS = 'No selected address.';
+const ERR_CHAINID = 'Invalid chain id #:chainId';
+
 const networks = Networks as { [chain: string]: NetworkTypes }
 
 interface HomeStatus {
@@ -516,6 +515,11 @@ const Home = () => {
 		setTokenSelectModal(false);
 		TokenSelectNameImageUpdate(value, para);
 	}
+
+	// responsive monitor
+	const [innerWidth, setInnerWidth] = React.useState(window.innerWidth);
+	const [innerHeight, setInnerHeight] = React.useState(window.innerHeight);
+
 	const TokenSelect = (para: boolean) => {
 		return (
 			<>
@@ -523,7 +527,6 @@ const Home = () => {
 					<div className='token-select-modal-bg' onClick={() => setTokenSelectModal(false)}></div>
 					<div className='token-select-modal-body'>
 						<div className='p2'>
-
 							<div className='justify p1'>
 								<div className=''>
 									<h3 style={{ margin: '0', color: '#f3ba2f' }}>
@@ -542,18 +545,7 @@ const Home = () => {
 						</div>
 						<div className='row'>
 							<div className='col-sm-4 col-md-4' style={{ borderTop: '1px grey solid' }}>
-								<div className='border-right-top-10 dis-f jc-sb fw-w over-h w10' style={{ background: '#2b2d2c', padding: '10px' }}>
-									{/* {Object.keys(networks).map(k =>
-									(
-										<a key={k} className='justify fd-c' onClick={(e: any) => para ? onChangeNetwork(k) : onChangeNetwork2(k)}>
-											<li ref={chainSelectActive} id={k} className={'chain-select justify w10'}>
-												<img className="icon" width={'30px'} src={`/networks/${k}.svg`} alt={k} />
-												<span>{L['chain.' + k.toLowerCase()]}</span>
-											</li>
-										</a>
-									)
-									)} */}
-
+								<div className='mobile-res border-right-top-10 dis-f jc-sb fw-w over-h w10' style={{ background: '#2b2d2c', padding: '10px', height: `${window.innerWidth <= 567 ? window.innerHeight - 90 : '100%'}px` }}>
 									{/* virtual networks */}
 									{Object.keys(VirtualNetworks).map(k =>
 									(
@@ -642,7 +634,7 @@ const Home = () => {
 				return
 			}
 		} catch (error: any) {
-			err = '🦊 ' + error.message
+			err = '  ' + error.message
 		}
 		G.update({ status: DISCONNECTED, address: '', err })
 
@@ -765,24 +757,7 @@ const Home = () => {
 							<img alt='' className='mauto' src='/flash-logo.png' width={'35px'} />
 							<span className='chain-font'>{G.targetChain}</span>
 						</div>
-
-						{/* <div className='dashboard-line'></div>
-						<div className='dashboard-line'></div> */}
-
 					</div>
-					{/* <div className="label" style={{ paddingTop: 30 }}>Asset</div> */}
-					{/* <div className="asset">
-						<input ref={refList} id="asset" type="checkbox" style={{ display: 'none' }} />
-						<label className="asset" htmlFor="asset">
-							<div className="flex" style={{ alignItems: 'center' }}>
-								<img src={`/img/flash-logo.png`} style={{ width: 45, height: 40, marginRight: 10 }} alt={G.token} />
-								<span>{'FLASH'} <small>coin</small></span>
-							</div>
-							<div>
-							</div>
-						</label>
-					</div> */}
-
 
 					{G.inited ? (
 						!supported ? (
@@ -810,57 +785,64 @@ const Home = () => {
 								</div>) : (G.status === CONNECTED ? 'SUBMIT' : 'Connect wallet')
 							}
 						</button>
-
-						{G.err ? (
-							<p style={{ color: 'red', backgroundColor: '#2b2f36', padding: 10 }}>{G.err}</p>
-						) : (
-							<p style={{ color: '#35ff35' }}>{G.address ? 'Your wallet: ' + G.address.slice(0, 10) + '...' + G.address.slice(-4) : ''}</p>
-						)}
+						{G.status === CONNECTED ?
+							(G.err ? (
+								<div className='dis-f ai-c'>
+									<img src={G.walletSelect} width='20px' height='20px' alt={G.walletSelect} />
+									<p style={{ color: 'red', padding: 10 }}>{G.err}</p>
+								</div>
+							) : (
+								<p style={{ color: '#35ff35' }}>{G.address ? 'Your wallet: ' + G.address.slice(0, 10) + '...' + G.address.slice(-4) : ''}</p>
+							))
+							: <></>
+						}
 					</div>
-					{pendingTxs.length ? (
-						<div style={{ paddingTop: 20 }}>
-							<p><b className="label">Your transactions:</b></p>
-							<div style={{ maxHeight: 300, overflowY: 'auto' }}>
-								{pendingTxs.map((v, k) => (
-									<div className={"tx flex" + (G.txs[v.key]?.tx ? '' : ' pending')} key={k}>
-										<div className="c1">
-											<img src={`/networks/${v.chain}.svg`} style={{ border: '1px white solid', borderRadius: '50%', width: 16, height: 16, marginRight: 5 }} alt={v.chain} />
-											<span> To </span>
-											<img src={`/networks/${v.targetChain}.svg`} style={{ border: '1px white solid', borderRadius: '50%', width: 16, height: 16, marginLeft: 5 }} alt={v.targetChain} />
-										</div>
-										<code className="c2"><a className="cmd" href={networks[v.chain].explorer + '/tx/' + v.key} target="_blank" rel="noreferrer" >{v.key.slice(0, 10) + '...' + v.key.slice(-4)}</a></code>
-										<code className="c3">
-											<img src={`/flash-logo.png`} loading='lazy' style={{ width: 20, height: 20, marginRight: 5 }} alt={v.token} />
-											<span title={G.txs[v.key]?.fee || ''}>{v.value}</span>
-										</code>
+					{G.status === CONNECTED ? <>
+						{pendingTxs.length ? (
+							<div style={{ paddingTop: 20 }}>
+								<p><b className="label">Your transactions:</b></p>
+								<div style={{ maxHeight: 300, overflowY: 'auto' }}>
+									{pendingTxs.map((v, k) => (
+										<div className={"tx flex" + (G.txs[v.key]?.tx ? '' : ' pending')} key={k}>
+											<div className="c1">
+												<img src={`/networks/${v.chain}.svg`} style={{ border: '1px white solid', borderRadius: '50%', width: 16, height: 16, marginRight: 5 }} alt={v.chain} />
+												<span> To </span>
+												<img src={`/networks/${v.targetChain}.svg`} style={{ border: '1px white solid', borderRadius: '50%', width: 16, height: 16, marginLeft: 5 }} alt={v.targetChain} />
+											</div>
+											<code className="c2"><a className="cmd" href={networks[v.chain].explorer + '/tx/' + v.key} target="_blank" rel="noreferrer" >{v.key.slice(0, 10) + '...' + v.key.slice(-4)}</a></code>
+											<code className="c3">
+												<img src={`/flash-logo.png`} loading='lazy' style={{ width: 20, height: 20, marginRight: 5 }} alt={v.token} />
+												<span title={G.txs[v.key]?.fee || ''}>{v.value}</span>
+											</code>
 
 
-										<div className="c4" style={{ textAlign: "right" }}>
-											{G.txs[v.key] ? (
-												G.txs[v.key].tx ? (
-													<a className="cmd" href={networks[v.targetChain].explorer + '/tx/' + G.txs[v.key].tx} target="_blank" rel="noreferrer">view result</a>
-												) : (
-													G.txs[v.key].err ? (<code style={{ color: 'red' }}>error</code>) :
-														(
-															<code style={{ color: '#76808f' }}>
-																{G.txs[v.key].confirmations >= networks[v.chain].confirmations ? 'processing…' : G.txs[v.key].confirmations + ' / ' + networks[v.chain].confirmations}
-															</code>
-														)
-												)
-											) : <code style={{ color: '#76808f' }}>confirming...</code>
-											}
+											<div className="c4" style={{ textAlign: "right" }}>
+												{G.txs[v.key] ? (
+													G.txs[v.key].tx ? (
+														<a className="cmd" href={networks[v.targetChain].explorer + '/tx/' + G.txs[v.key].tx} target="_blank" rel="noreferrer">view result</a>
+													) : (
+														G.txs[v.key].err ? (<code style={{ color: 'red' }}>error</code>) :
+															(
+																<code style={{ color: '#76808f' }}>
+																	{G.txs[v.key].confirmations >= networks[v.chain].confirmations ? 'processing…' : G.txs[v.key].confirmations + ' / ' + networks[v.chain].confirmations}
+																</code>
+															)
+													)
+												) : <code style={{ color: '#76808f' }}>confirming...</code>
+												}
+											</div>
 										</div>
-									</div>
-								))}
+									))}
+								</div>
 							</div>
-						</div>
-					) : null}
+						) : null}
+					</> : <></>}
 				</div>
 			</div>
 		</section>
 
 		{/* if G.address&&token is selected */}
-		{G.address && G.address.length > 0 &&
+		{G.address && G.address.length > 0 && G.status === CONNECTED &&
 			<section>
 				<div className="c ml3-md">
 					<div className={`panel2 transaction-detail ${isTransaction ? 'trans-bg' : ''}`}>
