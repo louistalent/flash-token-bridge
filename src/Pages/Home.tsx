@@ -565,7 +565,7 @@ const Home = () => {
 										<div key={index} className='justify pr1'>
 											<div onClick={() => CallTokenSelect(key, para)} className='justify mt2 w10 token-hover'>
 												<div className='justify'>
-													<img className="icon" width={'60px'} src={`/select-token/${key.toLocaleLowerCase()}.png`} alt={key} />
+													<img className="icon" width={'60px'} src={`/select-token/${key}.png`} alt={key} />
 													&nbsp;&nbsp;&nbsp;&nbsp;
 													<h4 className='' style={{ margin: '0', padding: '0' }}>
 														{key} <br />
