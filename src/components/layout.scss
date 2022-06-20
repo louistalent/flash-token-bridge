@@ -28,6 +28,8 @@
 .wallet-connect-btn:hover {
     background: #c1bb4b26;
     cursor: pointer;
+            transform: scale(1.1);
+
 }
 
 .footer-section{
@@ -70,7 +72,7 @@
   top: 0;
   bottom: 0;
   z-index: 51;
-  backdrop-filter: blur(1.2px);
+  backdrop-filter: blur(9px);
   background-color: rgba(48, 50, 54, 0.9);
 }
 
@@ -84,26 +86,43 @@
 .wallet-modal {
   background: #38393a;
   opacity: 0.95;
-  box-shadow: 0px 0px 3px 2px white;
+  // box-shadow: 0px 0px 3px 2px white;
 }
 
 .wallet-icon-hover {
   padding: 10px;
+  transition: .2s ease-in-out;
   border-radius: 20px;
 }
 
 .wallet-icon-hover:hover {
-  background: rgb(143, 137, 137);
   cursor: pointer;
+  transform: scale(1.05);
+
 }
 
 .wallet-imgs {
-  width: 11rem;
-  height: 11rem;
+  width: 2.2rem;
+  height: 2.2rem;
 }
 
 .wallet-modal {
   max-width: 40rem;
+}
+
+.wallet-option-box{
+  padding: 15px;
+  color: #f3ba2f;
+  border-radius: 10px 10px 10px 10px;
+  border: 1px #f3ba2f solid;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 16rem;
+  h4{
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
 }
 
 @media (max-width:567px) {

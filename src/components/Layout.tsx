@@ -7,7 +7,7 @@ import { useWallet } from '../hooks/useWallet';
 import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core';
 
 import networks from "../config/networks.json";
-import { AiOutlineLinkedin } from "react-icons/ai";
+import { AiOutlineLinkedin, AiOutlineClose } from "react-icons/ai";
 
 const ERR_INSTALL = '🦊 You must install Metamask into your browser: https://metamask.io/download.html'
 const ERR_NOACCOUNTS = '🦊 No selected address.'
@@ -82,22 +82,43 @@ const Layout = (props: any) => {
                 <div className='modal-back' onClick={() => U.update({ walletModal: false })}></div>
 
                 <div className="modal-body wallet-modal" >
-                    <div className='justify'>
+                    <div className='dis-f w10' style={{ justifyContent: 'flex-end' }}>
+                        <AiOutlineClose className='cu-po' onClick={() => U.update({ walletModal: false })} fontSize={'25px'} />
+                    </div>
+                    <div className='dis-f w10'>
+                        <text className='grey mt1 mb2' style={{ fontSize: '25px' }}>Connect Wallet</text>
+                    </div>
+                    <div className='justify fd-c'>
                         <div className='wallet-icon-hover'>
-                            <a onClick={() => handleConnect('injected')}>
-                                <img src={'/img/metamask.png'} className='justify wallet-imgs' alt='Metamask' />
-                            </a>
+                            <div className='wallet-option-box'>
+                                <h4 className=''>
+                                    MetaMask
+                                </h4>
+                                <a onClick={() => handleConnect('injected')}>
+                                    <img src={'/img/metamask.png'} className='justify wallet-imgs' alt='Metamask' />
+                                </a>
+                            </div>
                         </div>
                         <div className='wallet-icon-hover'>
-                            <a onClick={() => handleConnect('walletconnect')}>
-                                <img src={'/img/trust.png'} className='justify wallet-imgs' alt='Trust' />
-                            </a>
+                            <div className='wallet-option-box'>
+                                <h4 className=''>
+                                    WalletConnect
+                                </h4>
+                                <a onClick={() => handleConnect('walletconnect')}>
+                                    <img src={'/img/walletconnect.svg'} className='justify wallet-imgs' alt='WalletConnect' />
+                                </a>
+                            </div>
                         </div>
                         <div className='justify'>
                             <div className='wallet-icon-hover'>
-                                <a onClick={() => handleConnect('walletlink')}>
-                                    <img src={'/img/coinbase.png'} className='justify wallet-imgs' alt='Coinbase' />
-                                </a>
+                                <div className='wallet-option-box'>
+                                    <h4 className=''>
+                                        Coinbase Wallet
+                                    </h4>
+                                    <a onClick={() => handleConnect('walletlink')}>
+                                        <img src={'/img/coinbase.png'} className='justify wallet-imgs' alt='Coinbase' />
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -127,12 +148,20 @@ const Layout = (props: any) => {
                             </div>
                             {/* <span className="badge">{L['bridge']}</span> */}
                         </Link>
-
-                        <button onClick={() => { U.update({ walletModal: true }) }} className='wallet-connect-btn'>
-                            {
-                                account ? account.slice(0, 5) + '...' + account.slice(account.length - 5, account.length) : 'Connect Wallet'
-                            }
-                        </button>
+                        {
+                            G.status !== DISCONNECTED ?
+                                <button onClick={() => { U.update({ walletModal: false, status: DISCONNECTED }) }} className='wallet-connect-btn'>
+                                    {
+                                        'Disconnect'
+                                    }
+                                </button>
+                                :
+                                <button onClick={() => { U.update({ walletModal: true }) }} className='wallet-connect-btn'>
+                                    {
+                                        account ? account.slice(0, 5) + '...' + account.slice(account.length - 5, account.length) : 'Connect Wallet'
+                                    }
+                                </button>
+                        }
 
                     </header>
                     <main>
@@ -149,7 +178,7 @@ const Layout = (props: any) => {
                             <a href="https://www.youtube.com/channel/UCbNApPsnWrYixnri4hwUUyA" target='_blank'> <img src="/social/youtube.svg" alt="youtube" /> </a>
                             <a href="https://www.linkedin.com/company/flash-technologies-off/" target='_blank'> <AiOutlineLinkedin color="white" fontSize={'27px'} /> </a>
                         </nav>
-                        <div className="dis-f ai-c jc-c w10 tc pb3"> © Copyright FLASH 2022&nbsp;,&nbsp; <a className="" href="https://linktr.ee/FlashTechnologies" style={{ color: '#f0b90b' }}>FLASH LINK</a></div>
+                        <div className="dis-f ai-c jc-c w10 tc pb3">© Copyright Flash Technologies 2022&nbsp;,&nbsp; <a className="" href="https://linktr.ee/FlashTechnologies" style={{ color: '#f0b90b' }}>FLASH LINK</a></div>
                     </footer>
                     {G.walletModal === true
                         ? <WalletModal />
