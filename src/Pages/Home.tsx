@@ -505,9 +505,9 @@ const Home = () => {
 	}
 	const TokenSelectNameImageUpdate = (value: string, para: boolean) => {
 		if (para) {
-			setSelectedTokenOnChain({ ...selectedTokenOnChain, name: value, img: value.toLocaleLowerCase() });
+			setSelectedTokenOnChain({ name: value, img: value.toLocaleLowerCase() });
 		} else {
-			setSelectedTokenOnTargetChain({ ...selectedTokenOnTargetChain, name: value, img: value.toLocaleLowerCase() });
+			setSelectedTokenOnTargetChain({ name: value, img: value.toLocaleLowerCase() });
 		}
 
 	}
@@ -515,10 +515,6 @@ const Home = () => {
 		setTokenSelectModal(false);
 		TokenSelectNameImageUpdate(value, para);
 	}
-
-	// responsive monitor
-	const [innerWidth, setInnerWidth] = React.useState(window.innerWidth);
-	const [innerHeight, setInnerHeight] = React.useState(window.innerHeight);
 
 	const TokenSelect = (para: boolean) => {
 		return (
@@ -690,7 +686,7 @@ const Home = () => {
 							<button onClick={() => { setNotargetChain(true); setTokenSelectModal(true); }} className='token-select-btn'>
 								<div className='justify'>
 									{
-										selectedTokenOnChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnChain.name} src={`/select-token/${selectedTokenOnChain.img.toUpperCase()}.png`} /> : <></>
+										selectedTokenOnChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnChain.name} src={`/select-token/${selectedTokenOnChain.img}.png`} /> : <></>
 									}
 									&nbsp;
 									{selectedTokenOnChain.name}
@@ -719,7 +715,7 @@ const Home = () => {
 							<button onClick={() => { setNotargetChain(false); setTokenSelectModal(true); }} className='token-select-btn'>
 								<div className='justify'>
 									{
-										selectedTokenOnTargetChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnTargetChain.name} src={`/select-token/${selectedTokenOnTargetChain.img.toUpperCase()}.png`} /> : <></>
+										selectedTokenOnTargetChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnTargetChain.name} src={`/select-token/${selectedTokenOnTargetChain.img}.png`} /> : <></>
 									}
 									&nbsp;
 									{selectedTokenOnTargetChain.name}
