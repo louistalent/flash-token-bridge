@@ -575,7 +575,7 @@ const Home = () => {
 										<div key={index} className='justify pr1'>
 											<div onClick={() => CallTokenSelect(key, para)} className='justify mt2 w10 token-hover'>
 												<div className='justify'>
-													<img className="icon" width={'60px'} src={`/select-token/${key.toUpperCase()}.png`} alt={key} />
+													<img className="icon" width={'60px'} src={`/select-token/FLASH.png`} alt={key} />
 													&nbsp;&nbsp;&nbsp;&nbsp;
 													<h4 className='' style={{ margin: '0', padding: '0' }}>
 														{key} <br />
@@ -698,7 +698,7 @@ const Home = () => {
 							<button onClick={() => { setNotargetChain(true); setTokenSelectModal(true); }} className='token-select-btn'>
 								<div className='justify'>
 									{
-										selectedTokenOnChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnChain.name} src={`/select-token/${selectedTokenOnChain.img}.png`} /> : <></>
+										selectedTokenOnChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnChain.name} src={`/select-token/${selectedTokenOnChain.img.toUpperCase()}.png`} /> : <></>
 									}
 									&nbsp;
 									{selectedTokenOnChain.name}
@@ -727,7 +727,7 @@ const Home = () => {
 							<button onClick={() => { setNotargetChain(false); setTokenSelectModal(true); }} className='token-select-btn'>
 								<div className='justify'>
 									{
-										selectedTokenOnTargetChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnTargetChain.name} src={`/select-token/${selectedTokenOnTargetChain.img}.png`} /> : <></>
+										selectedTokenOnTargetChain.img ? <img style={{ width: '20px', height: '20px' }} alt={selectedTokenOnTargetChain.name} src={`/select-token/${selectedTokenOnTargetChain.img.toUpperCase()}.png`} /> : <></>
 									}
 									&nbsp;
 									{selectedTokenOnTargetChain.name}
@@ -927,13 +927,15 @@ const Home = () => {
 								<div className='justify'>
 									<span className='chain-font'>You will receive {G.token} token at this address</span>
 									<div className='justify'>
-										{G.address &&
-											<span className='chain-font'>
-												{G.address.slice(0, 5) + '...' + G.address.slice(G.address.length - 5, G.address.length)}
-											</span>
-										}
+										<a className='chain-font white' href={`https://bscscan.com/address/${G.address}`} target={'_blank'}>
+											{G.address &&
+												<span className='chain-font'>
+													{G.address.slice(0, 5) + '...' + G.address.slice(G.address.length - 5, G.address.length)}
+												</span>
+											}
+										</a>
 										&nbsp;&nbsp;
-										<a href={`https:://bscscan.com.address/${G.address}`} target={'_blank'}>
+										<a href={`https://bscscan.com/address/${G.address}`} target={'_blank'}>
 											<img src='/img/scan.png' style={{ borderRadius: '50%', border: '0px black solid' }} width='25px' height='25px' alt='scan logo'></img>
 										</a>
 									</div>
