@@ -505,9 +505,9 @@ const Home = () => {
 	}
 	const TokenSelectNameImageUpdate = (value: string, para: boolean) => {
 		if (para) {
-			setSelectedTokenOnChain({ ...selectedTokenOnChain, img: value, name: value });
+			setSelectedTokenOnChain({ ...selectedTokenOnChain, name: value, img: value.toLocaleLowerCase() });
 		} else {
-			setSelectedTokenOnTargetChain({ ...selectedTokenOnTargetChain, name: value, img: value });
+			setSelectedTokenOnTargetChain({ ...selectedTokenOnTargetChain, name: value, img: value.toLocaleLowerCase() });
 		}
 
 	}
@@ -567,7 +567,7 @@ const Home = () => {
 										<div key={index} className='justify pr1'>
 											<div onClick={() => CallTokenSelect(key, para)} className='justify mt2 w10 token-hover'>
 												<div className='justify'>
-													<img className="icon" width={'60px'} src={`/select-token/FLASH.png`} alt={key} />
+													<img className="icon" width={'60px'} src={`/select-token/${key.toLocaleLowerCase()}.png`} alt={key} />
 													&nbsp;&nbsp;&nbsp;&nbsp;
 													<h4 className='' style={{ margin: '0', padding: '0' }}>
 														{key} <br />
