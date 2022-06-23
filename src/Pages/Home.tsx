@@ -696,7 +696,7 @@ const Home = () => {
 							</button>
 						</div>
 						<div className=''>
-							<input ref={refAmount} className="amount tr" type="input" value={G.value} onChange={(e) => { onChangeValue(e.target.value); onChangeValueOnChain(e.target.value) }} />
+							<input ref={refAmount} className="amount tr" style={{ height: '30px!important' }} type="input" value={G.value} onChange={(e) => { onChangeValue(e.target.value); onChangeValueOnChain(e.target.value) }} />
 							<br />
 							<div className='tr' style={{ marginRight: '4px' }}>{countFlashPrice} $</div>
 						</div>
@@ -725,7 +725,7 @@ const Home = () => {
 							</button>
 						</div>
 						<div className=''>
-							<input ref={refAmount} className="amount tr" type="input" value={G.value} onChange={(e) => onChangeValue(e.target.value)} />
+							<input ref={refAmount} className="amount tr" style={{ height: '30px!important' }} type="input" value={G.value} onChange={(e) => onChangeValue(e.target.value)} />
 							<br />
 							<div className='tr' style={{ marginRight: '4px' }}>{countFlashPrice} $</div>
 						</div>

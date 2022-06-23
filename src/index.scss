@@ -1,8 +1,8 @@
-
-iframe{
-	display: none!important;
-	position: unset!important;
+iframe {
+	display: none !important;
+	position: unset !important;
 }
+
 * {
 	box-sizing: border-box;
 }
@@ -800,7 +800,8 @@ input::-webkit-inner-spin-button {
 		background: transparent;
 		color: inherit;
 		width: 5em;
-		height: 1em;
+		// height: 1em;
+		height: 30px !important;
 		line-height: 1em;
 		font-size: max(2em, 1em);
 		border: 1px solid transparent;
@@ -890,8 +891,9 @@ input::-webkit-inner-spin-button {
 		cursor: pointer;
 	}
 }
-.transaction-detail{
-	.middle-section{
+
+.transaction-detail {
+	.middle-section {
 		margin-top: 10px;
 		margin-bottom: 10px;
 		padding-top: 10px;
@@ -903,48 +905,48 @@ input::-webkit-inner-spin-button {
 
 // Tooltip -------------------------------------start 
 .tooltip {
-  position: relative;
-  display: inline-block;
+	position: relative;
+	display: inline-block;
 }
 
 .tooltip .tooltiptext {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 150%;
-  left: 50%;
-  margin-left: -60px;
+	visibility: hidden;
+	width: 120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	position: absolute;
+	z-index: 1;
+	bottom: 150%;
+	left: 50%;
+	margin-left: -60px;
 }
 
 .tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: black transparent transparent transparent;
+	content: "";
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: black transparent transparent transparent;
 }
 
 .tooltip:hover .tooltiptext {
-  visibility: visible;
+	visibility: visible;
 }
 
 /* Light */
 .light .tooltip .tooltiptext {
-  background-color: #e5eaee;
-  color: #1e2735;
+	background-color: #e5eaee;
+	color: #1e2735;
 }
 
 .light .tooltip .tooltiptext::after {
-  border-color: #e5eaee transparent transparent transparent;
+	border-color: #e5eaee transparent transparent transparent;
 }
 
 .token-select-modal {
@@ -1014,7 +1016,7 @@ input::-webkit-inner-spin-button {
 	// }
 
 	.token-hover:hover {
-				background: #c1bb4b26;
+		background: #c1bb4b26;
 		border-radius: 10px 10px 10px 10px;
 		cursor: pointer;
 		// background: #c1bb4b26;
@@ -1037,69 +1039,86 @@ input::-webkit-inner-spin-button {
 	z-index: 997;
 	display: flex;
 }
+
 // Tooltip ------------------------------------- end 
 
 
-.transaction-none{
+.transaction-none {
 	display: block;
-    transition-property: opacity,height,visibility;
-    transition-duration: 500ms;
-    opacity: 0;
+	transition-property: opacity, height, visibility;
+	transition-duration: 500ms;
+	opacity: 0;
 	height: 0px;
 }
-.transaction-show{
-	transform: translate3d(0,0,0);
-	transition-property: opacity,height,visibility;
-    transition-duration: 500ms;
+
+.transaction-show {
+	transform: translate3d(0, 0, 0);
+	transition-property: opacity, height, visibility;
+	transition-duration: 500ms;
 	height: 300px;
-    opacity: 1;
+	opacity: 1;
 }
-.transaction-show-effect{
+
+.transaction-show-effect {
 	display: block;
-    transition-property: opacity,height,visibility;
-    transition-duration: 500ms;
+	transition-property: opacity, height, visibility;
+	transition-duration: 500ms;
 }
+
 .panel2 {
 	border-radius: 15px;
 	padding: 30px;
-	height:0px;
+	height: 0px;
 }
-.trans-bg{
+
+.trans-bg {
 	background-color: #181a19;
 	height: 300px;
 
 }
-.main-color{
- color: #f0b90b;
+
+.main-color {
+	color: #f0b90b;
 }
-.isloading{
+
+.isloading {
 	position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 2147483001;
-    display: flex;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 2147483001;
+	display: flex;
 	background-color: rgb(24, 26, 25);
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    transition: opacity .4s ease-in-out,z-index .4s step-end;
+	align-items: center;
+	justify-content: center;
+	opacity: 1;
+	transition: opacity .4s ease-in-out, z-index .4s step-end;
 }
-.loading-img{
-  animation-name: loading;
-  animation-duration: 1.4s;
-    animation-timing-function: ease;
-    animation-delay: 1s;
-    animation-iteration-count: infinite;
-    animation-direction: normal;
-    animation-fill-mode: none;
-    animation-play-state: running;
+
+.loading-img {
+	animation-name: loading;
+	animation-duration: 1.4s;
+	animation-timing-function: ease;
+	animation-delay: 1s;
+	animation-iteration-count: infinite;
+	animation-direction: normal;
+	animation-fill-mode: none;
+	animation-play-state: running;
 }
+
 @keyframes loading {
-  0%   {opacity: 1;}
-  50% {opacity: 0.3;}
-  100% {opacity: 1;}
+	0% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.3;
+	}
+
+	100% {
+		opacity: 1;
+	}
 }
 
 .loader,
