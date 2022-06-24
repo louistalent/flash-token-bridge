@@ -794,7 +794,7 @@ const Home = () => {
 							: <></>
 						}
 					</div>
-					{G.status === CONNECTED ? <>
+					{G.status === CONNECTED || G.address.length > 0 ? <>
 						{pendingTxs.length ? (
 							<div style={{ paddingTop: 20 }}>
 								<p><b className="label">Your transactions:</b></p>
