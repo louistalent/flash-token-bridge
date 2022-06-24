@@ -140,48 +140,50 @@ const Layout = (props: any) => {
 
                 </div>
                 : <>
-                    <header className="dis-f jc-sb ai-c pr2">
-                        <Link className="title justify" to="/">
-                            <div>
-                                <img src="/flash-logo.png" style={{ width: 50, height: 'auto' }} alt="logo" />
-                            </div>
-                            <div className="dis-f">
-                                <span className="h3" style={{ marginTop: '-7px' }}>{L['chain']}</span>
-                            </div>
-                            {/* <span className="badge">{L['bridge']}</span> */}
-                        </Link>
-                        {
-                            G.status !== DISCONNECTED ?
-                                <button onClick={() => { U.update({ walletModal: false, status: DISCONNECTED }) }} className='wallet-connect-btn'>
-                                    {
-                                        'Disconnect'
-                                    }
-                                </button>
-                                :
-                                <button onClick={() => { U.update({ walletModal: true }) }} className='wallet-connect-btn'>
-                                    {
-                                        G.status === DISCONNECTED ? 'Connect Wallet' : account && account.slice(0, 5) + '...' + account.slice(account.length - 5, account.length)
-                                    }
-                                </button>
-                        }
+                    <div className='dis-f fd-c'>
+                        <header className="dis-f jc-sb ai-c pr2">
+                            <Link className="title justify" to="/">
+                                <div>
+                                    <img src="/flash-logo.png" style={{ width: 50, height: 'auto' }} alt="logo" />
+                                </div>
+                                <div className="dis-f">
+                                    <span className="h3" style={{ marginTop: '-7px' }}>{L['chain']}</span>
+                                </div>
+                                {/* <span className="badge">{L['bridge']}</span> */}
+                            </Link>
+                            {
+                                G.status !== DISCONNECTED ?
+                                    <button onClick={() => { U.update({ walletModal: false, status: DISCONNECTED }) }} className='wallet-connect-btn'>
+                                        {
+                                            'Disconnect'
+                                        }
+                                    </button>
+                                    :
+                                    <button onClick={() => { U.update({ walletModal: true }) }} className='wallet-connect-btn'>
+                                        {
+                                            G.status === DISCONNECTED ? 'Connect Wallet' : account && account.slice(0, 5) + '...' + account.slice(account.length - 5, account.length)
+                                        }
+                                    </button>
+                            }
 
-                    </header>
-                    <main>
-                        {props.children}
-                    </main>
-                    <footer className="footer-section">
-                        <nav className="social-list">
-                            <a href="https://twitter.com/Flash_Techno_Of" target='_blank'> <img src="/social/twitter.svg" alt="twitter" /> </a>
-                            <a href="https://www.facebook.com/flashtechnologiesoff" target='_blank'> <img src="/social/facebook.svg" alt="facebook" /> </a>
-                            <a href="https://www.reddit.com/r/FlashTechnologies/" target='_blank'> <img src="/social/reddit.svg" alt="reddit" /> </a>
-                            <a href="https://t.me/flashtokenenglish" target='_blank'> <img src="/social/telegram.svg" alt="telegram" /> </a>
-                            <a href="mailto:contact@flash-bridge.com" target='_blank'> <img src="/social/mail.svg" alt="mail" /> </a>
-                            <a href="https://discord.gg/kkGDbGtTFz" target='_blank'> <img src="/social/discord.svg" alt="discord" /> </a>
-                            <a href="https://www.youtube.com/channel/UCbNApPsnWrYixnri4hwUUyA" target='_blank'> <img src="/social/youtube.svg" alt="youtube" /> </a>
-                            <a href="https://www.linkedin.com/company/flash-technologies-off/" target='_blank'> <AiOutlineLinkedin color="white" fontSize={'27px'} /> </a>
-                        </nav>
-                        <div className="dis-f ai-c jc-c w10 tc pb3">© Copyright Flash Technologies 2022&nbsp;,&nbsp; <a className="" href="https://linktr.ee/FlashTechnologies" style={{ color: '#f0b90b' }}>FLASH LINK</a></div>
-                    </footer>
+                        </header>
+                        <main className='dis-f flex1'>
+                            {props.children}
+                        </main>
+                        <footer className="footer-section">
+                            <nav className="social-list">
+                                <a href="https://twitter.com/Flash_Techno_Of" target='_blank'> <img src="/social/twitter.svg" alt="twitter" /> </a>
+                                <a href="https://www.facebook.com/flashtechnologiesoff" target='_blank'> <img src="/social/facebook.svg" alt="facebook" /> </a>
+                                <a href="https://www.reddit.com/r/FlashTechnologies/" target='_blank'> <img src="/social/reddit.svg" alt="reddit" /> </a>
+                                <a href="https://t.me/flashtokenenglish" target='_blank'> <img src="/social/telegram.svg" alt="telegram" /> </a>
+                                <a href="mailto:contact@flash-bridge.com" target='_blank'> <img src="/social/mail.svg" alt="mail" /> </a>
+                                <a href="https://discord.gg/kkGDbGtTFz" target='_blank'> <img src="/social/discord.svg" alt="discord" /> </a>
+                                <a href="https://www.youtube.com/channel/UCbNApPsnWrYixnri4hwUUyA" target='_blank'> <img src="/social/youtube.svg" alt="youtube" /> </a>
+                                <a href="https://www.linkedin.com/company/flash-technologies-off/" target='_blank'> <AiOutlineLinkedin color="white" fontSize={'27px'} /> </a>
+                            </nav>
+                            <div className="dis-f ai-c jc-c w10 tc pb3">© Copyright Flash Technologies 2022&nbsp;,&nbsp; <a className="" href="https://linktr.ee/FlashTechnologies" style={{ color: '#f0b90b' }}>FLASH LINK</a></div>
+                        </footer>
+                    </div>
                     {G.walletModal === true
                         ? <WalletModal />
                         : <></>
