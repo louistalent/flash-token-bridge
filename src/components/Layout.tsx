@@ -58,7 +58,6 @@ const Layout = (props: any) => {
     // Chain check
     const ChainCheck = () => {
         try {
-            alert('kkjkjkj')
             if (G.targetChain === G.chain) {
                 U.update({ err: 'Can`t bridge on the same chain' })
                 return tips('Can`t bridge on the same chain')
@@ -66,16 +65,16 @@ const Layout = (props: any) => {
             } else {
                 U.update({ err: '' })
             }
-            if (Number(G.chain) !== chainId) {
-                Object.keys(networks).map((k: any) => {
-                    if (Number(networks[k].chainId) === Number(chainId)) {
-                        U.update({ err: '' })
-                        throw new Error("error");
-                        return;
-                    } else {
-                        return tips('Unsupported Network, Chain ID : ' + chainId + '- Please change network on your wallet')
-                    }
-                })
+            if (chainId === 80001 || chainId === 338 || chainId === 97) {
+                // Object.keys(networks).map((k: any) => {
+                //     if (Number(networks[k].chainId) === Number(chainId)) {
+                //         U.update({ err: '' })
+                //         throw new Error("error");
+                //         return;
+                //     } else {
+                //     }
+                // })
+                return tips('Unsupported Network, Chain ID : ' + chainId + '- Please change network on your wallet')
             }
 
         } catch (error: any) {
@@ -84,7 +83,7 @@ const Layout = (props: any) => {
     }
     React.useEffect(() => {
         ChainCheck()
-    }, [G.targetChain, G.chain])
+    }, [G.chain])
 
 
     const L = G.L;
