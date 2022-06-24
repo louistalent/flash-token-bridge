@@ -9,7 +9,7 @@ async function main() {
 	// 	'FLASH',
 	// ];
 	const tokens = [
-		'THC',
+		'FLASH',
 	];
 	const deployTokens = await DeployTokens.deploy(tokens, signer.address);
 	const addrs = await deployTokens.getTokens();

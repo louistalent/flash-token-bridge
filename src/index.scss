@@ -204,6 +204,16 @@ section {
 	width: 41em;
 }
 
+@media(max-width:670px) {
+	section {
+		display: flex;
+		flex-flow: row wrap;
+		margin: 0px auto;
+		max-width: 41em;
+		width: unset;
+	}
+}
+
 .panel {
 	border-radius: 15px;
 	padding: 30px;

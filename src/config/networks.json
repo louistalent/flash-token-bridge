@@ -1,6 +1,6 @@
 {
     "BSC": {
-        "bridge": "0x20aBe9f0edc7921E8A72898e1eFBE6822be1fB4d",
+        "bridge": "0x86C47e1b0109E5d95A3F13477ae28ac494F9271C",
         "chainId": 97,
         "coin": "BNB",
         "decimals": 18,
@@ -11,7 +11,7 @@
         "erc20": "BEP20"
     },
     "POL": {
-        "bridge": "0x20aBe9f0edc7921E8A72898e1eFBE6822be1fB4d",
+        "bridge": "0x86C47e1b0109E5d95A3F13477ae28ac494F9271C",
         "chainId": 80001,
         "coin": "MATIC",
         "decimals": 18,
@@ -22,7 +22,7 @@
         "erc20": "ERC20"
     },
     "CRO": {
-        "bridge": "0x20aBe9f0edc7921E8A72898e1eFBE6822be1fB4d",
+        "bridge": "0x86C47e1b0109E5d95A3F13477ae28ac494F9271C",
         "chainId": 338,
         "coin": "TCRO",
         "decimals": 18,

@@ -23,7 +23,7 @@ export const errHandler = (err: any) => {
 export const tips = (html: string) => {
 	toast(html, {
 		position: "top-right",
-		autoClose: 1000,
+		autoClose: 4000,
 	});
 }
 export const NF = (num: number, p: number = 2) => Number(num).toFixed(p).replace(/\B(?=(\d{3})+(?!\d))/g, ",");

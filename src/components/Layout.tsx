@@ -5,9 +5,10 @@ import './layout.scss';
 import useWallet_, { request } from '../useWallet';
 import { useWallet } from '../hooks/useWallet';
 import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core';
-
 import networks from "../config/networks.json";
 import { AiOutlineLinkedin, AiOutlineClose } from "react-icons/ai";
+import { readSync } from 'fs';
+import { tips } from '../util';
 
 const ERR_INSTALL = '  You must install Metamask into your browser: https://metamask.io/download.html'
 const ERR_NOACCOUNTS = '  No selected address.'
@@ -38,8 +39,8 @@ const Layout = (props: any) => {
                 if (chainId === networks[G.chain].chainId) {
                     return
                 } else {
-                    err = ERR_CHAINID.replace(':chainId', String(chainId))
-                    U.update({ status: DISCONNECTED, address: '', err })
+                    // err = ERR_CHAINID.replace(':chainId', String(chainId))
+                    U.update({ status: CONNECTED, address: '' })
                 }
             } else {
                 U.update({ status: DISCONNECTED, err: '' })
@@ -48,20 +49,37 @@ const Layout = (props: any) => {
             }
         } catch (error: any) {
             err = '  ' + error.message
+            U.update({ err: err })
         }
 
-    }, [account])
+    }, [account, chainId])
 
 
     // Chain check
     const ChainCheck = () => {
-        if (G.targetChain === G.chain) {
-            U.update({ err: 'Can`t bridge on the same chain' })
-        } else {
-            U.update({ err: '' })
-        }
-        if (Number(G.chain) !== chainId) {
-            U.update({ err: 'Please change chain on your wallet. Connected chain ID : ' + chainId })
+        try {
+            alert('kkjkjkj')
+            if (G.targetChain === G.chain) {
+                U.update({ err: 'Can`t bridge on the same chain' })
+                return tips('Can`t bridge on the same chain')
+
+            } else {
+                U.update({ err: '' })
+            }
+            if (Number(G.chain) !== chainId) {
+                Object.keys(networks).map((k: any) => {
+                    if (Number(networks[k].chainId) === Number(chainId)) {
+                        U.update({ err: '' })
+                        throw new Error("error");
+                        return;
+                    } else {
+                        return tips('Unsupported Network, Chain ID : ' + chainId + '- Please change network on your wallet')
+                    }
+                })
+            }
+
+        } catch (error: any) {
+            console.log(error)
         }
     }
     React.useEffect(() => {
@@ -78,7 +96,6 @@ const Layout = (props: any) => {
             }
             await connect(key);
             U.update({ walletModal: !G.walletModal });
-            ChainCheck()
 
             // if (account !== undefined) {
             //     dispatch({
