@@ -140,7 +140,7 @@ const Layout = (props: any) => {
 
                 </div>
                 : <>
-                    <div className='dis-f fd-c'>
+                    <div className='dis-f fd-c' style={{ height: '100%' }}>
                         <header className="dis-f jc-sb ai-c pr2">
                             <Link className="title justify" to="/">
                                 <div>
