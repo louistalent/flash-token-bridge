@@ -1,10 +1,9 @@
 {
-    "lang" : "En",
-    "chain": "FLASH BRIGDE",
+    "lang": "En",
+    "chain": "BRIGDE",
     "bridge": "FLASH Bridge",
     "description": "The safe, fast and most secure way to bring cross-chain assets to Polygon, Cronos, Binance smart chains.",
     "wallet.connect": "Connect",
-
     "chain.icicb": "ICICB network",
     "chain.pol": "Polygon",
     "chain.cro": "Cronos",
@@ -26,8 +25,6 @@
     "chain.tron": "Tron",
     "chain.trx": "Tron network",
     "chain.ht": "HECO network",
-    
     "token.native": "Native Token",
-
-    "end":""
+    "end": ""
 }
