@@ -743,7 +743,7 @@ const Home = () => {
 						<div className='dis-f fd-c jc-c ai-c tc po-re'>
 							<img alt='' className='mauto' src='/flash-logo.png' width={'35px'} />
 							<br />
-							<span className='chain-font flash-bridge'>FLASH&nbsp;Bridge</span>
+							<span className='chain-font flash-bridge'> &nbsp; Bridge &nbsp;</span>
 						</div>
 						<div className='flex1 dis-f fd-c jc-c ai-c tc'>
 							<div className='dashboard-line'></div>
