@@ -141,6 +141,9 @@ const Home = () => {
 			G.update({ err: '' })
 			updateStatus({ loading: false })
 		}
+		if (Number(G.chain) !== chainId) {
+			G.update({ err: 'Please change chain on your wallet. Connected chain ID : ' + chainId })
+		}
 
 	}, [G.targetChain, G.chain])
 
@@ -741,7 +744,7 @@ const Home = () => {
 						<div className='dis-f fd-c jc-c ai-c tc po-re'>
 							<img alt='' className='mauto' src='/flash-logo.png' width={'35px'} />
 							<br />
-							<span className='chain-font flash-bridge'> &nbsp; Bridge &nbsp;</span>
+							<span className='chain-font flash-bridge'>Bridge</span>
 						</div>
 						<div className='flex1 dis-f fd-c jc-c ai-c tc'>
 							<div className='dashboard-line'></div>

@@ -167,7 +167,7 @@ const Layout = (props: any) => {
                             }
 
                         </header>
-                        <main className='dis-f flex1'>
+                        <main className='dis-f flex1 fd-c'>
                             {props.children}
                         </main>
                         <footer className="footer-section">

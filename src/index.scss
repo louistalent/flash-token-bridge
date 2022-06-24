@@ -101,7 +101,7 @@ h3,
 
 	h3,
 	.h3 {
-		font-size: 40px;
+		font-size: 18px;
 	}
 }
 
@@ -201,6 +201,7 @@ section {
 	flex-flow: row wrap;
 	margin: 0px auto;
 	max-width: 41em;
+	width: 41em;
 }
 
 .panel {
@@ -865,7 +866,7 @@ input::-webkit-inner-spin-button {
 
 	.flash-bridge {
 		position: absolute;
-		top: 30px;
+		top: 12px;
 		word-wrap: none;
 	}
 
