@@ -52,6 +52,23 @@ const Layout = (props: any) => {
 
     }, [account])
 
+
+    // Chain check
+    const ChainCheck = () => {
+        if (G.targetChain === G.chain) {
+            U.update({ err: 'Can`t bridge on the same chain' })
+        } else {
+            U.update({ err: '' })
+        }
+        if (Number(G.chain) !== chainId) {
+            U.update({ err: 'Please change chain on your wallet. Connected chain ID : ' + chainId })
+        }
+    }
+    React.useEffect(() => {
+        ChainCheck()
+    }, [G.targetChain, G.chain])
+
+
     const L = G.L;
 
     const handleConnect = async (key: string) => {
@@ -61,6 +78,8 @@ const Layout = (props: any) => {
             }
             await connect(key);
             U.update({ walletModal: !G.walletModal });
+            ChainCheck()
+
             // if (account !== undefined) {
             //     dispatch({
             //         type: "disconnect_able",
