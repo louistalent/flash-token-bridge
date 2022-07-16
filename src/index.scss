@@ -820,10 +820,12 @@ input::-webkit-inner-spin-button {
 		color: inherit;
 		width: 5em;
 		// height: 1em;
-		height: 30px !important;
-		line-height: 1em;
+		// height: 30px !important;
+		min-height: 30px !important;
+		max-height: 30px !important;
+		// line-height: 1em;
 		font-size: max(2em, 1em);
-		border: 1px solid transparent;
+		// border: 1px solid transparent;
 		transition: color 500ms ease-in-out 0s;
 
 		&:disabled {
@@ -833,6 +835,12 @@ input::-webkit-inner-spin-button {
 		// &:not(:disabled):hover, &:not(:disabled):focus {
 		// 	border-color: #f8d12f;
 		// }
+	}
+
+	.input-price {
+		min-height: 15px !important;
+		max-height: 22px !important;
+		margin-right: 4px;
 	}
 
 	.switcher {
