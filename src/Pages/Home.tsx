@@ -214,7 +214,8 @@ const Home = () => {
 		const result = await fetch('https://api.coinmarketcap.com/data-api/v3/price-prediction/query/half-year?cryptoId=16978',
 			{
 				method: 'GET',
-				// headers: { 'content-type': 'application/json' }, body: params ? JSON.stringify(params) : null
+				headers: { 'content-type': 'application/json' },
+				//  body: params ? JSON.stringify(params) : null
 			});
 		const priceresult = await result.json();
 		// priceresult.data.accuracyPoints[0].ypoint.settlementPrice
