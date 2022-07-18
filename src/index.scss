@@ -820,13 +820,16 @@ input::-webkit-inner-spin-button {
 		color: inherit;
 		width: 5em;
 		// height: 1em;
-		// height: 30px !important;
+		height: 30px !important;
 		min-height: 30px !important;
 		max-height: 30px !important;
 		// line-height: 1em;
 		font-size: max(2em, 1em);
 		// border: 1px solid transparent;
 		transition: color 500ms ease-in-out 0s;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		-ms-appearance: none;
 
 		&:disabled {
 			color: rgb(72, 76, 82);
