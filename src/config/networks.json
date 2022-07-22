@@ -31,5 +31,16 @@
         "rpc": "https://cronos-testnet-3.crypto.org:8545/",
         "explorer": "https://cronos.org/explorer/testnet3",
         "erc20": "ERC20"
+    },
+    "ETH": {
+        "bridge": "0x86C47e1b0109E5d95A3F13477ae28ac494F9271C",
+        "chainId": 4,
+        "coin": "ETH",
+        "decimals": 18,
+        "confirmations": 14,
+        "blocktime": 3000,
+        "rpc": "https://rinkeby.infura.io/v3/580d6de4d2694cbdbee111d2f553dbcc",
+        "explorer": "https://rinkeby.etherscan.io/",
+        "erc20": "ERC20"
     }
 }

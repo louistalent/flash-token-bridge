@@ -228,7 +228,7 @@ const Home = () => {
 	const onChangeNetwork = (chain: string) => {
 		ChainActive(chain)
 		const _chain = 'chain'
-		if (chain === 'CRO' || chain === 'POL' || chain === 'BSC') {
+		if (chain === 'CRO' || chain === 'POL' || chain === 'BSC' || chain === 'ETH') {
 			setFake_dis(true)
 
 			const net = networks[chain];
@@ -251,7 +251,7 @@ const Home = () => {
 		ChainActive(chain);
 		// setIsSure(true);
 		const _chain = 'targetChain'
-		if (chain === 'CRO' || chain === 'POL' || chain === 'BSC') {
+		if (chain === 'CRO' || chain === 'POL' || chain === 'BSC' || chain === 'ETH') {
 			setFake_dis(true)
 
 
@@ -425,74 +425,7 @@ const Home = () => {
 		}
 	}
 
-	// const ViewNetwork = (chain: any) => {
-	// 	useEffect(() => {
-	// 		setIsSure(false);
-	// 	}, [chain])
-	// 	return (
-	// 		<div className="chain">
-	// 			<img className="icon" src={`/networks/${chain}.svg`} alt={chain} />
-	// 			<div className="flex" style={{ marginTop: 10 }}>
-	// 				<div className="fill">{L['chain.' + chain.toLowerCase()]}</div>
-	// 				<div>
-	// 					<div className="menu">
-	// 						<i><span className="ic-down"></span></i>
-	// 						<ul ref={refMenu} style={{ width: 150 }}>
-	// 							{/* {Object.keys(networks).map(k =>
 
-	// 								// <li className={!!networks[k].disabled ? 'disabled' : ''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
-	// 								// 	<img className="icon" src={`/networks/${k}.svg`} alt="eth" />
-	// 								// 	<span>{L['chain.' + k.toLowerCase()]}</span>
-	// 								// </li>
-
-	// 								<li className={''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
-	// 									<img className="icon" src={`/networks/${k}.svg`} alt={k} />
-	// 									<span>{L['chain.' + k.toLowerCase()]}</span>
-	// 								</li>
-	// 							)} */}
-	// 						</ul>
-	// 					</div>
-	// 				</div>
-	// 			</div>
-	// 		</div>
-	// 	)
-	// }
-	// const ViewNetwork2 = (chain: any) => {
-	// 	// const [chainMor, setChainMor] = React.useState(chain);
-	// 	// useEffect(() => {
-	// 	// 	if (chain !== chainMor) {
-	// 	// 		setIsSure(true)
-	// 	// 	}
-	// 	// }, [chain])
-	// 	return (
-	// 		<div className="chain">
-	// 			<img className="icon" src={`/networks/${G.targetChain}.svg`} alt={chain} />
-	// 			<div className="flex" style={{ marginTop: 10 }}>
-	// 				<div className="fill">{L['chain.' + chain.toLowerCase()]}</div>
-	// 				<div>
-	// 					<div className="menu">
-	// 						<i><span className="ic-down"></span></i>
-	// 						<ul ref={refMenu} style={{ width: 150 }}>
-	// 							{/* {Object.keys(networks).map(k =>
-
-	// 							// <li className={!!networks[k].disabled ? 'disabled' : ''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork(k)}>
-	// 							// 	<img className="icon" src={`/networks/${k}.svg`} alt="eth" />
-	// 							// 	<span>{L['chain.' + k.toLowerCase()]}</span>
-	// 							// </li>
-	// 							(G.chain === k ? null :
-	// 								<li className={''} key={k} onClick={() => !!networks[k].disabled ? null : onChangeNetwork2(k)}>
-	// 									<img className="icon" src={`/networks/${k}.svg`} alt={k} />
-	// 									<span>{L['chain.' + k.toLowerCase()]}</span>
-	// 								</li>
-	// 							)
-	// 							)} */}
-	// 						</ul>
-	// 					</div>
-	// 				</div>
-	// 			</div>
-	// 		</div>
-	// 	)
-	// }
 	// @ts-ignore
 	const chainSelectActive = useRef(null);
 

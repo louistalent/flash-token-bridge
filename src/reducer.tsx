@@ -58,6 +58,10 @@ const initialState: BridgeTypes = {
 			decimals: 18,
 			address: process.env.REACT_APP_ADDRESS_POL
 		},
+		ETH: {
+			decimals: 18,
+			address: process.env.REACT_APP_ADDRESS_ETH
+		},
 	},
 }
 //I should automatically create a flashcoins object.

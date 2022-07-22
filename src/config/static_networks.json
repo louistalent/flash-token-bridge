@@ -8,8 +8,8 @@
     "CRO": {
         "img": "cronos.svg"
     },
-    "eth": {
-        "img": "ethereum.svg"
+    "ETH": {
+        "img": "ETH.svg"
     },
     "arbitrum": {
         "img": "arbitrum.svg"
@@ -41,16 +41,16 @@
     "polkadot": {
         "img": "polkadot.svg"
     },
-     "near": {
+    "near": {
         "img": "near.png"
     },
-     "cardano": {
+    "cardano": {
         "img": "cardano.png"
     },
-     "cosmos": {
+    "cosmos": {
         "img": "cosmos.png"
     },
-     "tron": {
+    "tron": {
         "img": "tron.png"
     }
 }

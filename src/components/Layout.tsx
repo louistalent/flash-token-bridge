@@ -65,7 +65,7 @@ const Layout = (props: any) => {
             } else {
                 U.update({ err: '' })
             }
-            if (chainId === 80001 || chainId === 338 || chainId === 97) {
+            if (chainId === 80001 || chainId === 338 || chainId === 97 || chainId === 97) {
                 // Object.keys(networks).map((k: any) => {
                 //     if (Number(networks[k].chainId) === Number(chainId)) {
                 //         U.update({ err: '' })
