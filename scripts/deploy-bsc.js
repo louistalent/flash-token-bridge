@@ -8,7 +8,7 @@ const hre = require("hardhat");
 async function main() {
 	const netId = "BSC"
 	const decimals = 18
-	const admin = "0xB9F0Ae6c430be4D3aF6906C3bb44BFFfCb68d87e";
+	const admin = "0x476786A536EC628703f50f521dED3486d1274477";
 
 	const signer = await hre.ethers.getSigner();
 	const network = await signer.provider._networkPromise;

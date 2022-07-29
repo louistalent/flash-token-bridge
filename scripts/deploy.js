@@ -8,7 +8,7 @@ const abiWICICB = require("../artifacts/contracts/WICICB.sol/WICICB.json");
 const hre = require("hardhat");
 
 async function main() {
-	const admin = "0x79342eE3f703Cb2bcDA33942cFB64353FE40F16C";
+	const admin = "0x476786A536EC628703f50f521dED3486d1274477";
 	const signer = await hre.ethers.getSigner();
 	const netid = 'ICICB'
 	const network = await signer.provider._networkPromise;

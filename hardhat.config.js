@@ -85,12 +85,12 @@ module.exports = {
 	etherscan: {
 		// Your API key for Etherscan
 		// Obtain one at https://etherscan.io/
-		apiKey: "WQKQ9RXXCTK715PKG1H7JUMV4ZEUW3KKXN"
+		apiKey: "4YR6VIGHEJJSZSJB78GZEDVVVYUU8YHF7C"
 	},
 	solidity: {
 		compilers: [
 			{
-				version: "0.6.12",
+				version: "0.8.14",
 				settings: {
 					optimizer: {
 						enabled: true,
@@ -99,25 +99,7 @@ module.exports = {
 				}
 			},
 			{
-				version: "0.8.0",
-				settings: {
-					optimizer: {
-						enabled: true,
-						runs: 200,
-					},
-				}
-			},
-			{
-				version: "^0.8.0",
-				settings: {
-					optimizer: {
-						enabled: true,
-						runs: 200,
-					},
-				}
-			},
-			{
-				version: "0.4.17",
+				version: "0.6.6",
 				settings: {
 					optimizer: {
 						enabled: true,
@@ -127,42 +109,6 @@ module.exports = {
 			},
 			{
 				version: "0.5.16",
-				settings: {
-					optimizer: {
-						enabled: true,
-						runs: 200,
-					},
-				}
-			},
-			{
-				version: "0.8.4",
-				settings: {
-					optimizer: {
-						enabled: true,
-						runs: 200,
-					},
-				}
-			},
-			{
-				version: "0.7.6",
-				settings: {
-					optimizer: {
-						enabled: true,
-						runs: 200,
-					},
-				}
-			},
-			{
-				version: "^0.4.11",
-				settings: {
-					optimizer: {
-						enabled: true,
-						runs: 200,
-					},
-				}
-			},
-			{
-				version: "^0.4.8",
 				settings: {
 					optimizer: {
 						enabled: true,
