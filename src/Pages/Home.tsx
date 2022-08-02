@@ -196,7 +196,7 @@ const Home = () => {
 	// },[])
 	const FLASHprice = async () => {
 		const url = "https://api.coinmarketcap.com/data-api/v3/price-prediction/query/half-year?cryptoId=16978";
-		const result = await request('/flash-coin-price', { url });
+		const result = await request('/get-coin-price', { url: url });
 
 		// const result = await fetch('',
 		// 	{
@@ -216,7 +216,7 @@ const Home = () => {
 		const token = G.token;
 		const info = G.flashcoins;
 		const result = await request('/input-chain-info', { info, token });
-		console.log('InputChainInfo');
+		console.log('InputChainInfo succeed');
 
 		console.log(result);
 	}
@@ -226,7 +226,7 @@ const Home = () => {
 		setTimeout(() => {
 			FLASHprice();
 			InputChainInfo()
-		}, 5000)
+		}, 2000)
 	}, [])
 
 

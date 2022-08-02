@@ -32,7 +32,8 @@ export const request = async (url: string, params?: any): Promise<ServerResponse
 		const result = await fetch(proxy + url,
 			{
 				method: 'POST',
-				headers: { 'content-type': 'application/json' }, body: params ? JSON.stringify(params) : null
+				headers: { 'content-type': 'application/json' },
+				body: params ? params : null
 			});
 		return await result.json();
 	} catch (error) {
