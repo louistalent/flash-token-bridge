@@ -210,13 +210,16 @@ const Home = () => {
 		InputChainInfo()
 	}, [])
 	const FLASHprice = async () => {
+		const url = "https://api.coinmarketcap.com/data-api/v3/price-prediction/query/half-year?cryptoId=16978";
+		const result = await request('/flash-coin-price', { url });
 
-		const result = await fetch('https://api.coinmarketcap.com/data-api/v3/price-prediction/query/half-year?cryptoId=16978',
-			{
-				method: 'GET',
-				headers: { 'content-type': 'application/json' },
-				//  body: params ? JSON.stringify(params) : null
-			});
+		// const result = await fetch('',
+		// 	{
+		// 		method: 'GET',
+		// 		headers: { 'content-type': 'application/json' },
+		// 	});
+
+		// @ts-ignore
 		const priceresult = await result.json();
 		// priceresult.data.accuracyPoints[0].ypoint.settlementPrice
 		console.log(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8));
