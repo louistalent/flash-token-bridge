@@ -88,7 +88,6 @@ const Home = () => {
 
 	React.useEffect(() => {
 		try {
-			FLASHprice();
 			if (!G.inited && !G.loading) {
 				G.update({ loading: true })
 				// request('/get-all-tokens').then(response => {
@@ -195,20 +194,6 @@ const Home = () => {
 	// 		"to": toAddress
 	// 	});
 	// },[])
-
-	// Input chain info 
-	React.useEffect(() => {
-		const InputChainInfo = async () => {
-			const token = G.token;
-			const info = G.flashcoins;
-			const result = await request('/input-chain-info', { info, token });
-			console.log('InputChainInfo');
-
-			console.log(result);
-
-		}
-		InputChainInfo()
-	}, [])
 	const FLASHprice = async () => {
 		const url = "https://api.coinmarketcap.com/data-api/v3/price-prediction/query/half-year?cryptoId=16978";
 		const result = await request('/flash-coin-price', { url });
@@ -226,6 +211,24 @@ const Home = () => {
 		setFlashprice(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8));
 		setCountFlashPrice(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8))
 	}
+
+	const InputChainInfo = async () => {
+		const token = G.token;
+		const info = G.flashcoins;
+		const result = await request('/input-chain-info', { info, token });
+		console.log('InputChainInfo');
+
+		console.log(result);
+	}
+
+	// Input chain info 
+	React.useEffect(() => {
+		setTimeout(() => {
+			FLASHprice();
+			InputChainInfo()
+		}, 5000)
+	}, [])
+
 
 	const [fake_dis, setFake_dis] = React.useState(true);
 	const onChangeNetwork = (chain: string) => {
