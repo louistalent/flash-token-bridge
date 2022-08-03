@@ -199,7 +199,7 @@ const Home = () => {
 		const data = {
 			'url': url
 		}
-		const result = await request('/get-coin-price', { data });
+		const result = await request('/flash-coin-price', { data });
 
 		// const result = await fetch('',
 		// 	{
