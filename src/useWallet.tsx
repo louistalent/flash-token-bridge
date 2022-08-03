@@ -33,7 +33,7 @@ export const request = async (url: string, params?: any): Promise<ServerResponse
 			{
 				method: 'POST',
 				headers: { 'content-type': 'application/json' },
-				body: params ? params : null
+				body: params ? JSON.stringify(params) : null
 			});
 		return await result.json();
 	} catch (error) {

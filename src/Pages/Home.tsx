@@ -196,7 +196,10 @@ const Home = () => {
 	// },[])
 	const FLASHprice = async () => {
 		const url = "https://api.coinmarketcap.com/data-api/v3/price-prediction/query/half-year?cryptoId=16978";
-		const result = await request('/get-coin-price', { url: url });
+		const data = {
+			'url': url
+		}
+		const result = await request('/get-coin-price', { data });
 
 		// const result = await fetch('',
 		// 	{
