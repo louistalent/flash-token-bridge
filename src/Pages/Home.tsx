@@ -210,7 +210,9 @@ const Home = () => {
 		const priceresult: any = result;
 		// priceresult.data.accuracyPoints[0].ypoint.settlementPrice
 
-		console.log(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8));
+		console.log(' priceresult ');
+		console.log(priceresult);
+
 		setFlashprice(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8));
 		setCountFlashPrice(priceresult.data.accuracyPoints[0].ypoint.settlementPrice.toFixed(8))
 	}
