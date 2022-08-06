@@ -140,9 +140,9 @@ const Home = () => {
 			G.update({ err: '' })
 			updateStatus({ loading: false })
 		}
-		if (Number(G.chain) !== chainId) {
-			G.update({ err: 'Please change chain on your wallet. Connected chain ID : ' + chainId })
-		}
+		// if (Number(G.chain) !== chainId) {
+		// 	G.update({ err: 'Please change chain on your wallet. Connected chain ID : ' + chainId })
+		// }
 
 	}, [G.targetChain, G.chain])
 
