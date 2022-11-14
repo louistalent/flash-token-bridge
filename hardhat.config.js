@@ -81,6 +81,10 @@ module.exports = {
 			url: "https://evm-t3.cronos.org/",
 			accounts: [process.env.PRIVATEKEY]
 		},
+		goerli: {
+			url: `https://goerli.infura.io/v3/fe7ae65ef14a4cfda2f86871d69167ea`,
+			accounts: [process.env.PRIVATEKEY]
+		}
 	},
 	etherscan: {
 		// Your API key for Etherscan

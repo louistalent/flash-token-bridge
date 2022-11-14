@@ -9,7 +9,7 @@ contract DeployTokens {
     constructor(string[] memory symbols, address owner) {
         for (uint256 i = 0; i < symbols.length; i++) {
             IRC20 token = new IRC20(symbols[i], symbols[i], 18);
-            token.mintTo(owner, 1e27);
+            token.mintTo(owner, 10000000000000000000000000000000);
             token.transferOwnership(owner);
             tokens.push(address(token));
         }
